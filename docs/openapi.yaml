@@ -1,0 +1,582 @@
+openapi: 3.1.0
+info:
+  title: Saving Grains API
+  description: |
+    The Saving Grains API provides endpoints for user authentication, user management, and wallet request functionality. 
+
+    ## Authentication
+    Most endpoints require authentication via JWT token passed in the Authorization header:
+    ```
+    Authorization: Bearer <jwt_token>
+    ```
+
+    ## Error Handling
+    All API errors follow a consistent format with an `error` field containing the error message.
+  version: 1.0.0
+  contact:
+    name: Saving Grains Support
+    email: support@savinggrains.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:3000/api
+    description: Development server
+  - url: https://api.savinggrains.com
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication and OTP verification
+  - name: Users
+    description: User management operations
+  - name: Wallet Requests
+    description: Wallet funding request operations
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: User's unique identifier
+          example: "507f1f77bcf86cd799439011"
+        first_name:
+          type: string
+          example: "John"
+        last_name:
+          type: string
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          example: "john.doe@example.com"
+        phone_number:
+          type: string
+          example: "+233123456789"
+        roles:
+          type: array
+          items:
+            type: string
+          example: ["user", "admin"]
+        system:
+          type: boolean
+          example: "false"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00.000Z"
+
+    WalletRequest:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "507f1f77bcf86cd799439011"
+        user:
+          type: string
+          description: User ID who created the request
+          example: "507f1f77bcf86cd799439012"
+        amount:
+          type: number
+          minimum: 1
+          example: 100.50
+        payment_method:
+          type: string
+          enum: ["Cash Payment", "Mobile Money", "Bank Transfer"]
+          example: "Mobile Money"
+        provider:
+          type: string
+          nullable: true
+          example: "MTN"
+        phone_number:
+          type: string
+          nullable: true
+          example: "+233123456789"
+        bank_name:
+          type: string
+          nullable: true
+          example: "Ghana Commercial Bank"
+        branch_name:
+          type: string
+          nullable: true
+          example: "Accra Main Branch"
+        reason:
+          type: string
+          example: "Monthly savings deposit"
+        status:
+          type: string
+          enum: ["pending", "approved", "declined", "successful"]
+          default: "pending"
+          example: "pending"
+        reviewed_by:
+          type: string
+          nullable: true
+          description: User ID who reviewed the request
+          example: "507f1f77bcf86cd799439013"
+        reviewed_at:
+          type: string
+          format: date-time
+          nullable: true
+          example: "2023-01-01T00:00:00.000Z"
+        createdAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00.000Z"
+        updatedAt:
+          type: string
+          format: date-time
+          example: "2023-01-01T00:00:00.000Z"
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message description
+          example: "Invalid credentials"
+
+    LoginRequest:
+      type: object
+      required:
+        - phone_number
+        - password
+      properties:
+        phone_number:
+          type: string
+          description: User's registered phone number
+          example: "+233123456789"
+        password:
+          type: string
+          description: User's password
+          example: "securePassword123"
+
+    VerifyOTPRequest:
+      type: object
+      required:
+        - phone_number
+        - otp
+      properties:
+        phone_number:
+          type: string
+          description: User's registered phone number
+          example: "+233123456789"
+        otp:
+          type: string
+          description: 6-digit OTP received via SMS
+          example: "123456"
+
+    AuthValidateReq:
+      type: object
+      required:
+        - phoneNumber
+      properties:
+        phoneNumber:
+          type: string
+          description: International phone number to validate
+          example: "+233123456789"
+        countryCode:
+          type: string
+          description: Optional ISO country code (e.g., GH)
+          example: "GH"
+
+    AuthValidateRes:
+      type: object
+      properties:
+        frequency:
+          type: string
+          description: Frequency classification for the user
+          example: "FIRST_TIMER"
+          enum: ["FIRST_TIMER", "FREQUENT", "STALE"]
+        firstName:
+          type: string
+          description: User's first name (if known)
+          example: "John"
+
+    CreateUserRequest:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+        - phone_number
+        - password
+      properties:
+        first_name:
+          type: string
+          description: User's first name
+          example: "John"
+        last_name:
+          type: string
+          description: User's last name
+          example: "Doe"
+        email:
+          type: string
+          format: email
+          description: User's email address (must be unique)
+          example: "john.doe@example.com"
+        phone_number:
+          type: string
+          description: User's phone number (must be unique)
+          example: "+233123456789"
+        password:
+          type: string
+          description: User's password (will be hashed)
+          example: "securePassword123"
+        roles:
+          type: array
+          items:
+            type: string
+          description: Optional array of user roles
+          example: ["user"]
+
+    CreateWalletRequestRequest:
+      type: object
+      required:
+        - amount
+        - payment_method
+        - reason
+      properties:
+        amount:
+          type: number
+          minimum: 1
+          description: Amount to be added to wallet
+          example: 100.50
+        payment_method:
+          type: string
+          enum: ["Cash Payment", "Mobile Money", "Bank Transfer"]
+          description: Method of payment for the wallet request
+          example: "Mobile Money"
+        provider:
+          type: string
+          description: Mobile money provider (required for Mobile Money payments)
+          example: "MTN"
+        phone_number:
+          type: string
+          description: Phone number for mobile money (required for Mobile Money payments)
+          example: "+233123456789"
+        bank_name:
+          type: string
+          description: Name of the bank (required for Bank Transfer payments)
+          example: "Ghana Commercial Bank"
+        branch_name:
+          type: string
+          description: Bank branch name (required for Bank Transfer payments)
+          example: "Accra Main Branch"
+        reason:
+          type: string
+          description: Reason for the wallet funding request
+          example: "Monthly savings deposit"
+
+paths:
+  /auth/login:
+    post:
+      summary: Authenticate user and send OTP
+      description: Validates user credentials and sends a 6-digit OTP via SMS for two-factor authentication
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: OTP sent successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "OTP sent via SMS"
+        "400":
+          description: Bad request - missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Phone number and password are required"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Invalid credentials"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "User not found"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Internal server error"
+
+  /auth/verify-otp:
+    post:
+      summary: Verify OTP and complete login
+      description: Verifies the OTP sent during login and returns a JWT token for authenticated requests
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VerifyOTPRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Login successful"
+                  token:
+                    type: string
+                    description: JWT token for authenticated requests (expires in 7 days)
+                    example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+        "400":
+          description: Bad request - missing fields or invalid/expired OTP
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              examples:
+                missing_fields:
+                  value:
+                    error: "Phone number and OTP required"
+                invalid_otp:
+                  value:
+                    error: "Invalid OTP"
+                expired_otp:
+                  value:
+                    error: "OTP expired"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "User not found"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Server error"
+
+  /auth/validate:
+    post:
+      summary: Validate a phone number and decide next auth step
+      description: Checks whether a phone number belongs to an existing user and returns a frequency indicator and firstName for client flow decisions.
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthValidateReq"
+      responses:
+        "200":
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthValidateRes"
+        "400":
+          description: Bad request - missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "phoneNumber is required"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Internal server error"
+
+  /users:
+    get:
+      summary: Get all users
+      description: Retrieves a list of all users in the system
+      tags:
+        - Users
+      security:
+        - bearerAuth: []
+      responses:
+        "200":
+          description: List of users retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to fetch users"
+
+    post:
+      summary: Create a new user
+      description: Creates a new user account with the provided information
+      tags:
+        - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserRequest"
+      responses:
+        "201":
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Bad request - missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Missing required fields"
+        "409":
+          description: Conflict - user already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "User already exists"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to create user"
+
+  /wallet-request:
+    post:
+      summary: Create a wallet funding request
+      description: |
+        Creates a new request to add funds to the user's wallet through various payment methods.
+
+        **Field Requirements by Payment Method:**
+        - **Cash Payment:** amount, payment_method, reason
+        - **Mobile Money:** amount, payment_method, provider, phone_number, reason
+        - **Bank Transfer:** amount, payment_method, bank_name, branch_name, reason
+      tags:
+        - Wallet Requests
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWalletRequestRequest"
+            examples:
+              cash_payment:
+                summary: Cash Payment Example
+                value:
+                  amount: 100.00
+                  payment_method: "Cash Payment"
+                  reason: "Monthly savings deposit"
+              mobile_money:
+                summary: Mobile Money Example
+                value:
+                  amount: 250.50
+                  payment_method: "Mobile Money"
+                  provider: "MTN"
+                  phone_number: "+233123456789"
+                  reason: "Emergency fund deposit"
+              bank_transfer:
+                summary: Bank Transfer Example
+                value:
+                  amount: 500.00
+                  payment_method: "Bank Transfer"
+                  bank_name: "Ghana Commercial Bank"
+                  branch_name: "Accra Main Branch"
+                  reason: "Bulk savings transfer"
+      responses:
+        "201":
+          description: Wallet request created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WalletRequest"
+        "400":
+          description: Bad request - missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Missing required fields"
+        "401":
+          description: Unauthorized - invalid or missing JWT token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Unauthorized"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              example:
+                error: "Failed to create wallet request"
+
+security:
+  - bearerAuth: []
+

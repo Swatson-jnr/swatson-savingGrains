@@ -1,0 +1,76 @@
+### Saving Grains API Testing
+### Base URL for development
+@baseUrl = http://localhost:3000/api
+@token = your_jwt_token_here
+
+### 1. User Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "phone_number": "+233123456789",
+  "password": "your_password"
+}
+
+### 2. Verify OTP (use OTP from login response)
+POST {{baseUrl}}/auth/verify-otp
+Content-Type: application/json
+
+{
+  "phone_number": "+233123456789",
+  "otp": "123456"
+}
+
+### 3. Create User
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "first_name": "John",
+  "last_name": "Doe",
+  "email": "john.doe@example.com",
+  "phone_number": "+233987654321",
+  "password": "securePassword123",
+  "roles": ["user"]
+}
+
+### 4. Get All Users (requires authentication)
+GET {{baseUrl}}/users
+Authorization: Bearer {{token}}
+
+### 5. Create Wallet Request - Cash Payment
+POST {{baseUrl}}/wallet-request
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "amount": 100.00,
+  "payment_method": "Cash Payment",
+  "reason": "Monthly savings deposit"
+}
+
+### 6. Create Wallet Request - Mobile Money
+POST {{baseUrl}}/wallet-request
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "amount": 250.50,
+  "payment_method": "Mobile Money",
+  "provider": "MTN",
+  "phone_number": "+233123456789",
+  "reason": "Emergency fund deposit"
+}
+
+### 7. Create Wallet Request - Bank Transfer
+POST {{baseUrl}}/wallet-request
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "amount": 500.00,
+  "payment_method": "Bank Transfer",
+  "bank_name": "Ghana Commercial Bank",
+  "branch_name": "Accra Main Branch",
+  "reason": "Bulk savings transfer"
+}
