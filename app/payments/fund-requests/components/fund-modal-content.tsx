@@ -117,8 +117,8 @@ const FundModalContent = ({
       console.log("Request body:", requestBody);
       console.log("Making API call to approve/decline...");
 
-      const response = await axios.put(
-        `http://localhost:3000/api/wallet-topup-request/${wallet.id}`,
+      const response = await apiClient.put(
+        `wallet-topup-request/${wallet.id}`,
         requestBody,
         {
           headers: {

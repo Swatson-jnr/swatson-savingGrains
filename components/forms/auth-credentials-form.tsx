@@ -30,6 +30,10 @@ export function AuthCredentialsForm({ setStep }: Props) {
         phone_number,
         passcode,
       });
+      // const res = await axios.post("http://localhost:3001/api/auth/login", {
+      //   phone_number,
+      //   passcode,
+      // });
       const data = res.data; // Axios automatically parses JSON
 
       // Check for HTTP errors (optional, Axios throws on 4xx/5xx by default)

@@ -11,7 +11,7 @@ import bill from "@/public/img/cash-payment-bill-1.svg";
 import emptyWallet from "@/public/img/empty-wallet.svg";
 import touch from "@/public/img/self-payment-touch.svg";
 import record from "@/public/img/streamline-ultimate-color_paper-write.svg";
-import request from "@/public/img/streamline-ultimate-color_paper-write.svg";
+import request from "@/public/img/moneyTransfer.png";
 import Mag from "@/public/img/tag-dollar.svg";
 import wallet2 from "@/public/img/wallet-2.svg";
 import wallet from "@/public/img/wallet.svg";
@@ -257,7 +257,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
           {/* .....Request and Transactions.........*/}
           <div className="flex flex-col justify-between gap-6 md:flex-row">
             {/* ........Fund Request section....... */}
-            <div className="flex-1">
+            {/* <div className="flex-1">
               <div className="mb-3 flex items-center justify-between">
                 <Title text="Fund Requests" level={5} />
                 <Link href="/payments/fund-requests">
@@ -275,6 +275,32 @@ export default function PaymentsLayout({ children }: LayoutProps) {
                     icon="/img/wallet.svg"
                   />
                 ))}
+              </div>
+            </div> */}
+            <div className="flex-1">
+              <div className="mb-3 flex items-center justify-between">
+                <Title text="Fund Requests" level={5} />
+                <Link href="/payments/fund-requests">
+                  <Button className="bg-[#E7B00E]">View All</Button>
+                </Link>
+              </div>
+              <div className="space-y-3 rounded-xl border border-[#D6D8DA] px-5 py-5">
+                {transactions.length === 0 ? (
+                  <TransactionCard isEmpty={true} />
+                ) : (
+                  transactions
+                    .slice(0, 4)
+                    .map((txn: any) => (
+                      <TransactionCard
+                        key={txn.id}
+                        amount={`₵${txn.amount}`}
+                        date={txn.date}
+                        person={txn.requestedBy}
+                        success={txn.status}
+                        icon="/img/wallet.svg"
+                      />
+                    ))
+                )}
               </div>
             </div>
 

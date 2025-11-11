@@ -1,6 +1,5 @@
 import { X } from "lucide-react";
 import React, { useState } from "react";
-import cash from "@/public/img/cash.svg";
 import { MobileMoneyInput } from "./mobileMoney-input-select";
 import ProgressSteps from "./progress-bar";
 import RequestConfirmationDetails from "./request-confirmation-details";
@@ -171,7 +170,7 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
     {
       value: "Cash Payment",
       label: "Cash Payment",
-      image: cash,
+      image: "img/cash.svg",
     },
     {
       value: "Mobile Money",
@@ -414,7 +413,7 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
                           <FloatingLabelInput
                             label="Account Number"
                             name="bank"
-                            className="h-12 max-w-[572px] rounded-lg border border-[#5D616B] p-5 outline-none"
+                            className="h-12 max-w-[572px] rounded-lg border  border-[#5D616B] p-5 outline-none"
                             value={phone}
                             onChange={(e) => {
                               setPhone(e.target.value);
