@@ -244,7 +244,7 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
           closeOnBackgroundClick={true}
           panelClassName="!max-w-full sm:!max-w-[800px] md:!max-w-[1003px] sm:!max-h-[800px] md:!max-h-[987px] !overflow-visible"
         >
-          <div className="flex min-h-full">
+          <div className="flex min-h-full text-black">
             {/* Left side - Progress & Titles */}
             <div className="flex max-h-[987px] flex-col self-stretch border-r border-[#E7B00E] bg-[#FDFEF5] px-7 py-9">
               <div>

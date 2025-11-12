@@ -170,7 +170,7 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
     {
       value: "Cash Payment",
       label: "Cash Payment",
-      image: "img/cash.svg",
+      image: "../img/cash.svg",
     },
     {
       value: "Mobile Money",
