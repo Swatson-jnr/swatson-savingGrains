@@ -1,14 +1,14 @@
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import connectDB from "@/lib/db";
 import Transaction, { ITransaction } from "@/lib/models/transaction";
-// import Transaction, { ITransaction } from "@/lib/models/transaction";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params;
+    const { id } = await context.params; // MUST await in Next.js 15
+
     await connectDB();
     const mongoose = (await import("mongoose")).default;
 
@@ -21,9 +21,11 @@ export async function GET(
 
     const tx = await Transaction.findById<ITransaction>(id).lean();
 
-    if (!tx) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (!tx) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
 
-    const mapped = {
+    return NextResponse.json({
       id: String(tx._id),
       label: tx.label,
       date: tx.date,
@@ -34,11 +36,11 @@ export async function GET(
       paymentType: tx.paymentType,
       counterparty: tx.counterparty,
       description: tx.description,
-    };
-
-    return NextResponse.json(mapped);
+    });
   } catch (error) {
-    console.error("/api/transactions/[id] error:", error);
+    const { id } = await context.params;
+    console.error(`/api/transactions/${id} error:`, error);
+
     return NextResponse.json(
       { error: "Failed to fetch transaction" },
       { status: 500 }
