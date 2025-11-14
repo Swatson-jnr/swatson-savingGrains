@@ -25,8 +25,12 @@ export const WalletRequestResponseSchema = z.object({
     return String(val);
   }),
   amount: z.number().positive("Amount must be positive"),
+  // payment_method: z
+  //   .enum(["cash", "mobile_money", "bank_transfer"])
+  //   .nullable()
+  //   .optional(),
   payment_method: z
-    .enum(["cash", "mobile_money", "bank_transfer"])
+    .enum(["Cash Payment", "Mobile Money", "Bank Transfer"]) // Match database enum
     .nullable()
     .optional(),
   provider: z.string().optional(),

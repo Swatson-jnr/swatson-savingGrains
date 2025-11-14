@@ -294,6 +294,8 @@ import WalletRequest from "@/lib/models/walletRequest";
 //       { status: 500 }
 //     );
 //   }
+
+// the old one where it just goes and sit it
 export const POST = async (req: NextRequest) => {
   try {
     // Try authentication first
@@ -345,15 +347,17 @@ export const POST = async (req: NextRequest) => {
       (r) => adminRoles.includes(r) || r === "admin" || r === "paymaster"
     );
 
-    // Create the wallet request
+    // Create the wallet request with status based on user role
     const walletRequest = await WalletRequest.create({
       user: user.id,
       amount,
       payment_method: payment_method || null,
       reason: reason || undefined,
-      status: WalletRequestStatus.PENDING,
-      reviewed_by: undefined,
-      reviewed_at: undefined,
+      status: isPrivileged
+        ? WalletRequestStatus.APPROVED
+        : WalletRequestStatus.PENDING,
+      reviewed_by: isPrivileged ? user.id : undefined,
+      reviewed_at: isPrivileged ? new Date() : undefined,
     });
 
     // If privileged user, attempt auto-approval with wallet transaction

@@ -138,9 +138,9 @@ export default function FundTable({ fundDetails }: FundTableProps) {
           <div className="rounded-full bg-[#F2F3F5] p-1.5 sm:p-2">
             <img
               src={
-                info.getValue() === "Bank Transfer"
+                info.getValue() === "bank_transfer"
                   ? "../img/bank.svg"
-                  : info.getValue() === "Mobile Money"
+                  : info.getValue() === "mobile_money"
                   ? "../img/mobile.svg"
                   : "../img/cash.svg"
               }
@@ -149,7 +149,13 @@ export default function FundTable({ fundDetails }: FundTableProps) {
             />
           </div>
           <span className="truncate text-xs font-normal text-black sm:text-[11px] md:text-[12px]">
-            {info.getValue()}
+            {info.getValue() === "bank_transfer"
+              ? "Bank Tranfer"
+              : info.getValue() === "mobile_money"
+              ? "Mobile Money"
+              : info.getValue() === "cash"
+              ? "Cash"
+              : "None Selected"}
           </span>
         </div>
       ),
