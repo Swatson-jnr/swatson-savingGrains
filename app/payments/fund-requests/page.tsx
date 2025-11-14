@@ -24,8 +24,7 @@ export default function Index() {
           },
         });
         setData(response.data.data);
-      } catch (error) {
-      }
+      } catch (error) {}
     };
 
     fetchData();
@@ -35,7 +34,7 @@ export default function Index() {
     ? data.map((item: any) => ({
         request: item.label || "Top up",
         id: item.id,
-        paymentMethod: item.paymentType || "N/A",
+        paymentMethod: item.paymentType || "None Selected",
         amount: parseFloat(item.amount) || 0,
         currency: item.currency || "GHS",
         status: item.status || "unknown",

@@ -116,7 +116,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
     ? data.map((item: any) => ({
         request: item.label || "Top up",
         id: item.id,
-        paymentMethod: item.paymentType || "N/A",
+        paymentMethod: item.paymentType || "None Selected",
         amount: parseFloat(item.amount) || 0,
         currency: item.currency || "GHS",
         status: item.status || "unknown",
@@ -129,8 +129,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
       }))
     : [];
   const transactions = recentTransaction;
-  // console.log("Formatted Transactions:", transactions);̀
-  // console.log("backwallet:", walletBackend);
+
   const rtransactions = [
     {
       id: 1,
