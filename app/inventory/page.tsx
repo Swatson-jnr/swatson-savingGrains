@@ -12,6 +12,7 @@ import { AppLayout } from "../layout/app";
 import InventoryCard from "./components/inventory-cards";
 import PendingPickupCard from "./components/pending-pickup-card";
 import RecentActivityCard from "./components/recent-activity";
+import AuthGuard from "@/components/auth/auth-guard";
 
 const index = () => {
   const overviewCards = [
@@ -116,96 +117,98 @@ const index = () => {
 
   return (
     <>
-      <AppLayout>
-        <div className="space-y-6 px-8 py-3">
-          <div>
-            <Title text="Inventory" level={2} />
-            <Title
-              text="View and manage your inventory"
-              level={6}
-              weight="normal"
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-            {overviewCards.map((card, index) => (
-              <InventoryCard
-                key={index}
-                amount={card.amount}
-                icon={card.icon}
-                type={card.type}
+      <AuthGuard>
+        <AppLayout>
+          <div className="space-y-6 px-8 py-3">
+            <div>
+              <Title text="Inventory" level={2} />
+              <Title
+                text="View and manage your inventory"
+                level={6}
+                weight="normal"
               />
-            ))}
-          </div>
-          <div className="mb-4 rounded-[20px] border px-5 py-5">
-            <div className="mb-3">
-              <Title text="Quick Actions" weight="semibold" level={6} />
             </div>
-            {/* ..............Action cards.......... */}
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-              {actions.map((action, index) => (
-                <ActionCard
+            <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+              {overviewCards.map((card, index) => (
+                <InventoryCard
                   key={index}
-                  icon={action.icon}
-                  label={action.label}
-                  bgColor={action.bgColor}
-                  containerbgColor={action.containerbgColor}
+                  amount={card.amount}
+                  icon={card.icon}
+                  type={card.type}
                 />
               ))}
             </div>
-          </div>
-          <div className="flex flex-col justify-between gap-6 md:flex-row">
-            {/* ........Fund Request section....... */}
-            <div className="flex-1">
-              <div className="mb-3 flex items-center justify-between">
-                <Title text="Pending Pickups" level={5} />
-                <Link href="/inventory/pending-pickups">
-                  <Button className="bg-[#E7B00E]">View All</Button>
-                </Link>
+            <div className="mb-4 rounded-[20px] border px-5 py-5">
+              <div className="mb-3">
+                <Title text="Quick Actions" weight="semibold" level={6} />
               </div>
-              <div className="space-y-3 rounded-[12px] border border-[#D6D8DA] px-5 py-5">
-                {transactions.map((txn) => (
-                  <PendingPickupCard
-                    key={txn.id}
-                    amount={txn.amount}
-                    from={txn.from}
-                    date={txn.date}
-                    person={txn.person}
-                    success={txn.success}
-                    icon={txn.icon}
-                    grainType={txn.grainType}
+              {/* ..............Action cards.......... */}
+              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+                {actions.map((action, index) => (
+                  <ActionCard
+                    key={index}
+                    icon={action.icon}
+                    label={action.label}
+                    bgColor={action.bgColor}
+                    containerbgColor={action.containerbgColor}
                   />
                 ))}
               </div>
             </div>
-
-            {/* .....Recent Transactions section..... */}
-            <div className="flex-1">
-              <div className="mb-3 flex items-center justify-between">
-                <Title text="Recent Activities" level={5} />
-                <Link href="/inventory/recent-activities">
-                  <Button>View All</Button>
-                </Link>
+            <div className="flex flex-col justify-between gap-6 md:flex-row">
+              {/* ........Fund Request section....... */}
+              <div className="flex-1">
+                <div className="mb-3 flex items-center justify-between">
+                  <Title text="Pending Pickups" level={5} />
+                  <Link href="/inventory/pending-pickups">
+                    <Button className="bg-[#E7B00E]">View All</Button>
+                  </Link>
+                </div>
+                <div className="space-y-3 rounded-[12px] border border-[#D6D8DA] px-5 py-5">
+                  {transactions.map((txn) => (
+                    <PendingPickupCard
+                      key={txn.id}
+                      amount={txn.amount}
+                      from={txn.from}
+                      date={txn.date}
+                      person={txn.person}
+                      success={txn.success}
+                      icon={txn.icon}
+                      grainType={txn.grainType}
+                    />
+                  ))}
+                </div>
               </div>
 
-              {/*......Recent Transaction card......*/}
-              <div className="space-y-3 rounded-[12px] border border-[#D6D8DA] px-5 py-5">
-                {transactions.map((txn) => (
-                  <RecentActivityCard
-                    key={txn.id}
-                    amount={txn.amount}
-                    activity={txn.activity}
-                    date={txn.date}
-                    person={txn.person}
-                    success={txn.success}
-                    icon={txn.icon}
-                    paymentType={txn.paymentType}
-                  />
-                ))}
+              {/* .....Recent Transactions section..... */}
+              <div className="flex-1">
+                <div className="mb-3 flex items-center justify-between">
+                  <Title text="Recent Activities" level={5} />
+                  <Link href="/inventory/recent-activities">
+                    <Button>View All</Button>
+                  </Link>
+                </div>
+
+                {/*......Recent Transaction card......*/}
+                <div className="space-y-3 rounded-[12px] border border-[#D6D8DA] px-5 py-5">
+                  {transactions.map((txn) => (
+                    <RecentActivityCard
+                      key={txn.id}
+                      amount={txn.amount}
+                      activity={txn.activity}
+                      date={txn.date}
+                      person={txn.person}
+                      success={txn.success}
+                      icon={txn.icon}
+                      paymentType={txn.paymentType}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </AppLayout>
+        </AppLayout>
+      </AuthGuard>
     </>
   );
 };
