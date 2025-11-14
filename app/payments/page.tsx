@@ -54,6 +54,11 @@ export default function PaymentsLayout({ children }: LayoutProps) {
   // const location = useLocation();
   // const amount = "2500.00";
 
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedCard(null); // Clear the selected card
+  };
+
   useEffect(() => {
     const fetchRequest = async () => {
       try {
@@ -308,7 +313,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
             <div className="flex-1">
               <div className="mb-3 flex items-center justify-between">
                 <Title text="Recent Transactions" level={5} />
-                <Link href="/payments/fund-requests">
+                <Link href="/overview/transactions">
                   <Button>View All</Button>
                 </Link>
               </div>
@@ -329,22 +334,15 @@ export default function PaymentsLayout({ children }: LayoutProps) {
               </div>
             </div>
           </div>
-          {/* <PaymentsList /> */}
         </div>
         {selectedCard?.label === "Request Top Up" && (
           <>
-            <RequestTopUpModal
-              visible={openModal}
-              onClose={() => setOpenModal(false)}
-            />
+            <RequestTopUpModal visible={openModal} onClose={handleCloseModal} />
           </>
         )}
         {selectedCard?.label === "Record Transaction" && (
           <>
-            <RecordTopUPModal
-              visible={openModal}
-              onClose={() => setOpenModal(false)}
-            />
+            <RecordTopUPModal visible={openModal} onClose={handleCloseModal} />
           </>
         )}
       </AppLayout>

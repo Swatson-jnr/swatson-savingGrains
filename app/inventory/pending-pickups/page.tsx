@@ -112,7 +112,7 @@ const PendingPickups = () => {
     <>
       <AppLayout>
         <div className="scrollbar-hide ml-7 mt-3">
-          <Link href="/inventory" className="flex items-center gap-2">
+          <Link href="/inventory" className="flex items-center gap-2 text-black">
             <ArrowLeft />
             <h4>Back</h4>
           </Link>

@@ -1,4 +1,3 @@
-
 import {
   createColumnHelper,
   flexRender,
@@ -61,7 +60,11 @@ export default function Table({ tableDetails }: TableProps) {
           {info.getValue()}
         </span>
       ),
-      header: () => <Title text="Date" level={7} weight="normal" />,
+      header: () => (
+        <div className="flex justify-end mr-14">
+          <Title text="Date" level={7} weight="normal" />
+        </div>
+      ),
     }),
     columnHelper.accessor("productLine", {
       cell: (info) => (
@@ -135,8 +138,8 @@ export default function Table({ tableDetails }: TableProps) {
                 info.getValue() === "Bank Transfer"
                   ? "../img/bank.svg"
                   : info.getValue() === "Mobile Money"
-                    ? "../img/mobile.svg"
-                    : "../img/cash.svg"
+                  ? "../img/mobile.svg"
+                  : "../img/cash.svg"
               }
               alt={info.getValue()}
               className="w-4 text-gray-500 sm:w-5"
@@ -232,7 +235,7 @@ export default function Table({ tableDetails }: TableProps) {
                         {/* <div className="text-center w-full"> */}
                         {flexRender(
                           headers.column.columnDef.header,
-                          headers.getContext(),
+                          headers.getContext()
                         )}
                       </div>
                     </th>
@@ -252,7 +255,7 @@ export default function Table({ tableDetails }: TableProps) {
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </td>
                   ))}

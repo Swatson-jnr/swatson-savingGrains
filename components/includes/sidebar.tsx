@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { LogOutIcon } from "lucide-react";
 import { useMemo } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation"; 
+import { useRouter } from "next/navigation";
 
 type NavLink = {
   href: string;
@@ -25,7 +25,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const location = useLocation();
-  const router = useRouter(); // 👈
+  const router = useRouter(); 
 
   // ✅ Logout function
   const handleLogout = () => {
@@ -102,14 +102,35 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     },
   ];
 
+  // const activeTab = useMemo(() => {
+  //   if (location.pathname?.includes("/overview")) return "overview";
+  //   if (location.pathname?.includes("/inventory")) return "inventory";
+  //   if (location.pathname?.includes("/payments")) return "payments";
+  //   if (location.pathname?.includes("/settings")) return "settings";
+  //   if (location.pathname?.includes("/reports")) return "reports";
+  //   return "";
+  // }, [location]);
+
   const activeTab = useMemo(() => {
-    if (location.pathname?.includes("/overview")) return "overview";
-    if (location.pathname?.includes("/inventory")) return "inventory";
-    if (location.pathname?.includes("/payments")) return "payments";
-    if (location.pathname?.includes("/settings")) return "settings";
-    if (location.pathname?.includes("/reports")) return "reports";
+    const pathname = location.pathname || "";
+
+    if (pathname.includes("/overview")) {
+      return "overview";
+    }
+    if (pathname.includes("/inventory")) {
+      return "inventory";
+    }
+    if (pathname.includes("/payments")) {
+      return "payments";
+    }
+    if (pathname.includes("/reports")) {
+      return "reports";
+    }
+    if (pathname.includes("/settings")) {
+      return "settings";
+    }
     return "";
-  }, [location]);
+  }, [location.pathname]);
 
   return (
     <>
@@ -148,7 +169,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                   "flex items-center gap-1 rounded-lg transition-colors hover:bg-gray-100",
                   isOpen ? "h-[50px] py-2.5 pl-1" : "h-12 justify-center py-3",
                   {
-                    "bg-[#E6AE0B] bg-opacity-10": activeTab === link.activeKey,
+                    "bg-[#E7B00E1A]": activeTab === link.activeKey,
                   }
                 )}
                 title={!isOpen ? link.label : undefined}

@@ -267,9 +267,9 @@ const FundModalContent = ({
         <Title text="Top Up Request Details" level={4} weight="bold" />
         <button
           onClick={onClose}
-          className="rounded-full border p-1.5 transition hover:bg-gray-100"
+          className="rounded-full border border-[#D6D8DA] p-1.5 hover:bg-gray-100"
         >
-          <X size={11} />
+          <X size={12} color="#343A46" />
         </button>
       </div>
 

@@ -16,7 +16,7 @@ interface DialogProps {
   dialogClassName?: string;
   size?: "xs" | "sm" | "md" | "lg" | "xl" | "xxl" | "screen";
   closeOnBackgroundClick?: boolean;
-  position?: "center" | "right" | "left" | "top" | "bottom";
+  position?: "center" | "right" | "left" | "top" | "bottom" | "topSmall";
   onClose?: () => void;
 }
 
@@ -80,6 +80,8 @@ export default function Modal({
         return "justify-start p-0";
       case "top":
         return "items-start justify-center";
+      case "topSmall":
+        return "items-start justify-center pt-20";
       case "bottom":
         return "items-end justify-center";
       default:
@@ -100,12 +102,12 @@ export default function Modal({
             as={Fragment}
             enter="ease-out duration-300"
             enterFrom="opacity-0"
-            enterTo="opacity-100"
+            enterTo="opacity-10"
             leave="ease-in duration-200"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 opacity-20" />
+            <div className="fixed bg-black inset-0 opacity-10" />
           </TransitionChild>
 
           <div

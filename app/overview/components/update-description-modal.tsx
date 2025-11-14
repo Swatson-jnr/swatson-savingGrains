@@ -20,9 +20,9 @@ const UpdateDescriptionModal = ({
         <Title text="Update Description" level={4} weight="bold" />
         <button
           onClick={onClose}
-          className="rounded-full border p-1.5 hover:bg-gray-100"
+            className="rounded-full border border-[#D6D8DA] p-1.5 hover:bg-gray-100"
         >
-          <X size={11} />
+            <X size={12} color="#343A46"/>
         </button>
       </div>
 
@@ -34,14 +34,14 @@ const UpdateDescriptionModal = ({
 
         <textarea
           defaultValue=" Our platform is designed to simplify complex workflows and provide clear insights at every stage. Each dashboard element updates in real time, allowing you to track progress, performance, and key metrics"
-          className="mb-4 h-[199px] w-full resize-none rounded-md border p-2 outline-none"
+          className="mb-4 h-[199px] w-full resize-none text-black rounded-md border p-2 outline-none"
         />
       </div>
       <div className="flex justify-between space-x-3">
         <Button
           variant="outline"
           onClick={onClose}
-          className="max-h-[48px] w-[200px] rounded-[8px] border-[#080808] text-[13px] text-[#080808]"
+          className="max-h-[48px] w-[200px] bg-white rounded-[8px] border-[#080808] text-[13px] text-[#080808]"
         >
           Cancel
         </Button>

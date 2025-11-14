@@ -51,32 +51,36 @@ const OTPInput = ({
   };
 
   return (
-    <div 
-      style={typeof containerStyle === "object" ? containerStyle : undefined} 
-      className={typeof containerStyle === "string" ? containerStyle : undefined}
+    <div
+      style={typeof containerStyle === "object" ? containerStyle : undefined}
+      className={
+        typeof containerStyle === "string" ? containerStyle : undefined
+      }
     >
-      {inputs.map((i) =>
-        renderInput(
-          {
-            value: value[i] || "",
-            onChange: (e) => handleChange(i, e.target.value),
-            onFocus: () => {},
-            onBlur: () => {},
-            onKeyDown: () => {},
-            onPaste: () => {},
-            "aria-label": `OTP input ${i + 1}`,
-            autoComplete: "one-time-code",
-            style: {},
-            inputMode: "numeric",
-            onInput: () => {},
-            ref: () => {},
-            placeholder: "",
-            className: "",
-            type: "text",
-          },
-          i
-        )
-      )}
+      {inputs.map((i) => (
+        <React.Fragment key={i}>
+          {renderInput(
+            {
+              value: value[i] || "",
+              onChange: (e) => handleChange(i, e.target.value),
+              onFocus: () => {},
+              onBlur: () => {},
+              onKeyDown: () => {},
+              onPaste: () => {},
+              "aria-label": `OTP input ${i + 1}`,
+              autoComplete: "one-time-code",
+              style: {},
+              inputMode: "numeric",
+              onInput: () => {},
+              ref: () => {},
+              placeholder: "",
+              className: "",
+              type: "text",
+            },
+            i
+          )}
+        </React.Fragment>
+      ))}
     </div>
   );
 };

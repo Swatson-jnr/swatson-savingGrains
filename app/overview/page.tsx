@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 import { useState } from "react";
 import Image from "next/image";
 
-// Images (removed ?url)
+// Images
 import bill from "@/public/img/cash-payment-bill-1.svg";
 import move from "@/public/img/cash-payment-bill-1.svg";
 import receive from "@/public/img/receive.svg";
@@ -28,6 +28,9 @@ import pouch from "@/public/img/pouch.svg";
 import ionReceipt from "@/public/img/ion_receipt.svg";
 import AuthGuard from "@/components/auth/auth-guard";
 import RequestTopUpModal from "./components/request-topup-modal";
+import Link from "next/link";
+
+type ModalType = "request-topup" | "record-transaction" | null;
 
 type Props = {
   transactions: {
@@ -39,13 +42,7 @@ type Props = {
 };
 
 export default function OverviewPage({ transactions }: Props) {
-  const [openModal, setOpenModal] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<any>(null);
-
-  const handleCardClick = (card: any) => {
-    setSelectedCard(card);
-    setOpenModal(true);
-  };
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   // Overview cards
   const overviewCards = [
@@ -63,42 +60,49 @@ export default function OverviewPage({ transactions }: Props) {
       label: "Buy Stock",
       bgColor: "#D19FFF4D",
       containerbgColor: "#D19FFF1D",
+      modalType: null,
     },
     {
       icon: touch,
       label: "Sell Stock",
       bgColor: "#9FEAFF4D",
       containerbgColor: "#9FEAFF1D",
+      modalType: null,
     },
     {
       icon: bill,
-      label: "Withdraw Funds",
+      label: "Pay Service",
       bgColor: "#FF9FAF4D",
       containerbgColor: "#FF9FAF1A",
+      modalType: null,
     },
     {
       icon: move,
       label: "Move Stock",
       bgColor: "#B6FBDF4D",
       containerbgColor: "#B6FBDF1A",
+      modalType: null,
     },
     {
       icon: receive,
       label: "Receive Stock",
       bgColor: "#9FEAFF4D",
       containerbgColor: "#9FEAFF1D",
+      modalType: null,
     },
     {
       icon: record,
       label: "Record Transaction",
       bgColor: "#D49FFF4D",
       containerbgColor: "#D49FFF1A",
+      modalType: "record-transaction" as ModalType,
     },
     {
       icon: request,
       label: "Request Top Up",
       bgColor: "#FF9FEC4D",
       containerbgColor: "#FF9FEC1A",
+      modalType: "request-topup" as ModalType,
     },
   ];
 
@@ -203,7 +207,11 @@ export default function OverviewPage({ transactions }: Props) {
                   key={index}
                   icon={action.icon}
                   label={action.label}
-                  onClick={() => handleCardClick(action)}
+                  onClick={() => {
+                    if (action.modalType) {
+                      setActiveModal(action.modalType);
+                    }
+                  }}
                   bgColor={action.bgColor}
                   containerbgColor={action.containerbgColor}
                 />
@@ -215,24 +223,24 @@ export default function OverviewPage({ transactions }: Props) {
           <div>
             <div className="mb-5 flex items-center justify-between">
               <Title text="Recent Transactions" weight="semibold" level={5} />
+              <Link href="/overview/transactions">
+                <Button>View all</Button>
+              </Link>
             </div>
             <Table tableDetails={tableData} />
           </div>
         </div>
 
-        {/* Modals */}
-        {selectedCard?.label === "Request Top Up" && (
-          <RequestTopUpModal
-            visible={openModal}
-            onClose={() => setOpenModal(false)}
-          />
-        )}
-        {selectedCard?.label === "Record Transaction" && (
-          <RecordTopUPModal
-            visible={openModal}
-            onClose={() => setOpenModal(false)}
-          />
-        )}
+        {/* Modals - Only one renders at a time */}
+        <RequestTopUpModal
+          visible={activeModal === "request-topup"}
+          onClose={() => setActiveModal(null)}
+        />
+
+        <RecordTopUPModal
+          visible={activeModal === "record-transaction"}
+          onClose={() => setActiveModal(null)}
+        />
       </AppLayout>
     </AuthGuard>
   );

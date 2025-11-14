@@ -259,7 +259,7 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
           // position="left"
           onClose={handleCancel}
           closeOnBackgroundClick={true}
-          panelClassName="!max-w-full sm:!max-w-[800px] md:!max-w-[1003px] sm:!max-h-[800px] md:!max-h-[987px] !overflow-visible"
+          panelClassName="!max-w-full sm:!max-w-[800px] md:!max-w-[1003px] sm:!max-h-[800px] md:!h-[987px] !overflow-visible"
         >
           <div className="flex min-h-full">
             {/* Left side - Progress & Titles */}
@@ -281,9 +281,9 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
                   <div>
                     <button
                       onClick={onClose}
-                      className="absolute right-9 top-5 rounded-full border p-1.5 transition hover:bg-gray-100"
+                      className="absolute right-9 top-5 rounded-full border border-[#D6D8DA] p-1.5 transition hover:bg-gray-100"
                     >
-                      <X size={11} />
+                      <X size={11} color="#343A46"/>
                     </button>
                   </div>
 

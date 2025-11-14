@@ -11,15 +11,15 @@ interface PaymentCardProps {
 const OverviewCard: React.FC<PaymentCardProps> = ({ icon, amount, type }) => {
   const [isSelected, setIsSelected] = useState(false);
 
-  const handleSelect = () => {
-    setIsSelected((prev) => !prev);
-  };
+  // const handleSelect = () => {
+  //   setIsSelected((prev) => !prev);
+  // };
 
   return (
     <div className="py-5">
       <Card
-        onClick={handleSelect}
-        className={`flex max-h-[134px] max-w-[208px] cursor-pointer flex-col items-start justify-center border px-3 py-2 shadow-none transition-all ${
+        // onClick={handleSelect}
+        className={`flex max-h-[134px] max-w-52 cursor-pointer flex-col items-start justify-center border px-3 py-2 shadow-none transition-all ${
           isSelected ? "border-yellow-500 bg-yellow-50" : "border-gray-200"
         }`}
       >

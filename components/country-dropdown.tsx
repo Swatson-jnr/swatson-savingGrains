@@ -70,7 +70,7 @@ export const CountryDropdown: React.FC = () => {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-1 w-full rounded-md border border-[#5D616B] bg-white">
+        <div className="absolute left-0 top-full z-50 mt-1 w-full text-black rounded-md border border-[#5D616B] bg-white">
           {countries.map((country) => (
             <button
               key={country.code}

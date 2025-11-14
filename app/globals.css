@@ -1,15 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
 @import "tailwindcss";
 
+/* Set Inter as the default font */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --font-sans: "Inter", system-ui, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +24,155 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+
+
+@layer utilities {
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
+
+
+
+/* --- Calendar container --- */
+.flatpickr-calendar {
+  background: white !important;
+  border: 1px solid #e5e7eb; /* gray-300 */
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Month navigation bar --- */
+.flatpickr-months {
+  background: white !important;
+  border-bottom: 1px solid #e5e7eb !important;
+}
+
+.flatpickr-month {
+  background: white !important;
+}
+
+.flatpickr-current-month {
+  background: white !important;
+  color: black !important;
+}
+
+/* --- Chevron buttons --- */
+.flatpickr-prev-month,
+.flatpickr-next-month {
+  background: white !important;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+/* Chevron icons themselves */
+.flatpickr-prev-month svg,
+.flatpickr-next-month svg {
+  fill: black !important;
+  stroke: black !important;
+}
+
+/* Hover background for chevrons */
+.flatpickr-prev-month:hover,
+.flatpickr-next-month:hover {
+  background: #f3f4f6 !important; /* gray-100 */
+}
+
+/* --- Month dropdown and year inputs (remove blue + dropdown arrow) --- */
+.flatpickr-monthDropdown-months,
+.flatpickr-monthDropdown-months select {
+  background: white !important;
+  color: black !important;
+  border: none !important;
+  appearance: none !important;
+}
+
+.flatpickr-monthDropdown-months:after,
+.flatpickr-current-month .numInputWrapper:after {
+  display: none !important;
+}
+
+.flatpickr-current-month .numInputWrapper {
+  background: white !important;
+  border: none !important;
+}
+
+.flatpickr-current-month input.cur-year {
+  background: white !important;
+  color: black !important;
+  border: none !important;
+}
+
+.flatpickr-current-month input:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* --- Weekday labels (M T W T F S S) --- */
+.flatpickr-weekdays {
+  background: white !important;
+}
+
+.flatpickr-weekday {
+  background: white !important;
+  color: black !important;
+  font-weight: 500;
+}
+
+/* --- Individual days --- */
+.flatpickr-day {
+  background: white !important;
+  color: black !important;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+/* --- Range (gray) --- */
+.flatpickr-day.inRange,
+.flatpickr-day.prevMonthDay.inRange,
+.flatpickr-day.nextMonthDay.inRange {
+  background: #d3d3d3 !important;
+  color: black !important;
+  border-color: transparent !important;
+}
+
+/* --- Selected day (yellow, fully rounded) --- */
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected {
+  background: #FFD700 !important; /* yellow */
+  color: black !important;
+  border-color: #FFD700 !important;
+  border-radius: 9999px !important; /* full circle */
+}
+
+/* --- Today's date (remove blue) --- */
+.flatpickr-day.today {
+  background: white !important;
+  color: black !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.flatpickr-day.today:hover {
+  background: #f3f4f6 !important;
+  border-color: #d1d5db !important;
+}
+
+/* --- Hover effect for days --- */
+.flatpickr-day:hover {
+  background: #f0f0f0 !important;
+  border-color: #ccc !important;
+}
+
+/* --- Remove blue focus ring --- */
+.flatpickr-day:focus {
+  outline: none !important;
 }

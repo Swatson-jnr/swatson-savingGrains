@@ -85,10 +85,10 @@ const FilterDropdown = ({
   };
 
   return (
-    <div ref={dropdownRef} className="relative mb-5 h-[44px] w-[162px] p-2.5">
+    <div ref={dropdownRef} className="relative flex justify-center items-center mb-5 h-11 w-[162px] p-2.5 text-black border border-[#AEB0B5] rounded-md">
       <button
         onClick={() => setOpen(!open)}
-        className="flex w-full items-center justify-between gap-2 rounded-md border border-gray-300 px-3 py-2 text-sm text-gray-700"
+        className="flex w-full items-center justify-between gap-2 text-sm text-gray-700"
       >
         <span className="truncate">{getDisplayText()}</span>
         <ChevronDown
@@ -99,7 +99,7 @@ const FilterDropdown = ({
       </button>
 
       {open && (
-        <div className="top-15 absolute left-0 z-50 mt-1 w-full rounded-[6px] border border-[#5D616B] bg-white px-2.5 py-4 shadow-lg">
+        <div className="top-10 absolute left-0 z-50 mt-1 w-[162px] rounded-[6px] border border-[#D6D8DA] bg-white px-2.5 py-4 shadow-lg">
           <h1 className="mb-2 text-[12px] font-normal text-[#343A46]">
             {title}
           </h1>
@@ -129,7 +129,7 @@ const FilterDropdown = ({
           <div className="mt-3 flex items-center justify-center">
             <Button
               onClick={handleApply}
-              className="px-15 mb-0 h-10 w-[142px] py-4"
+              className="px-15 mb-0 h-10 w-[142px] py-4 bg-[#E7B00E]"
             >
               Apply
             </Button>

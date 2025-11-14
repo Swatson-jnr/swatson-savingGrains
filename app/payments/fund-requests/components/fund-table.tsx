@@ -255,12 +255,12 @@ export default function FundTable({ fundDetails }: FundTableProps) {
     <>
       <div className="scrollbar-hide mx-auto flex min-h-screen flex-col px-2 py-3 sm:px-4 sm:py-4 md:py-5">
         {/* .......Filters Section..... */}
-        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className=" flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           {/*......... Filter Dropdowns......... */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-4">
             <FilterDropdown
               items={sort}
-              title="Select sort option"
+              title="Select Role"
               placeholder="Sort by: All"
               onApply={handleRoleFilter}
               multiSelect={true}

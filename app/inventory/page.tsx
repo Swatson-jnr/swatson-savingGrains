@@ -17,7 +17,7 @@ const index = () => {
   const overviewCards = [
     {
       amount: "850 kg",
-      icon: "../img/inv_Box.svg",
+      icon: "../img/fbox.svg",
       type: "Total Weight",
     },
     {
@@ -57,7 +57,7 @@ const index = () => {
     },
     {
       icon: receive,
-      label: "Withdraw Funds",
+      label: "Receive Stock",
       bgColor: "#9FEAFF4D",
       containerbgColor: "#9FEAFF1A",
     },
@@ -182,7 +182,7 @@ const index = () => {
             <div className="flex-1">
               <div className="mb-3 flex items-center justify-between">
                 <Title text="Recent Activities" level={5} />
-                <Link href="/inventory/recent">
+                <Link href="/inventory/recent-activities">
                   <Button>View All</Button>
                 </Link>
               </div>

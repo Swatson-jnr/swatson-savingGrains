@@ -16,6 +16,7 @@ interface SelectInputProps {
   options: Option[];
   onChange?: (value: string) => void;
   value?: string;
+  showBackground?: boolean;
 }
 
 const SelectInput = ({
@@ -26,6 +27,7 @@ const SelectInput = ({
   placeholder,
   onChange,
   value,
+  showBackground = true,
 }: SelectInputProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -45,7 +47,7 @@ const SelectInput = ({
 
   return (
     <div className="flex flex-col gap-3" ref={ref}>
-      <label htmlFor={name}>{label}</label>
+      {label && <label htmlFor={name}>{label}</label>}
       <div className="relative max-w-[572px]">
         {/* Trigger button */}
         <button
@@ -55,16 +57,6 @@ const SelectInput = ({
         >
           {selected ? (
             <div className="flex items-center gap-2">
-              {/* Render icon OR image */}
-              {/* {selected.icon ? (
-                selected.icon
-              ) : selected.image ? (
-                <img
-                  src={selected.image}
-                  alt={selected.label}
-                  className="h-5 w-5 object-contain"
-                />
-              ) : null} */}
               <span>{selected.label}</span>
             </div>
           ) : (
@@ -78,7 +70,7 @@ const SelectInput = ({
 
         {/* Dropdown menu */}
         {isOpen && (
-          <div className="absolute z-10 mt-1 w-full rounded-md border border-gray-200 bg-white shadow-lg">
+          <div className="absolute z-10 mt-0.5 w-full rounded-md border border-[#D6D8DA] bg-white shadow-lg">
             {options.map((opt) => (
               <div
                 key={opt.value}
@@ -88,22 +80,23 @@ const SelectInput = ({
                   setIsOpen(false);
                 }}
               >
-                {/* Rendering icon OR image */}
+                {/* Icon or Image wrapper */}
                 <div
-                  className={`flex justify-center ${
-                    opt.icon || opt.image ? "bg-[#D6D8DA]" : null
-                  } h-[30px] w-[30px] items-center rounded-full p-1`}
+                  className={`flex justify-center items-center h-[30px] w-[33px] rounded-full p-1 ${
+                    showBackground && (opt.icon || opt.image)
+                      ? "bg-[#D6D8DA]"
+                      : "bg-transparent"
+                  }`}
                 >
-                  {" "}
                   {opt.icon ? (
                     opt.icon
                   ) : opt.image ? (
                     <img
                       src={opt.image}
                       alt={opt.label}
-                      className="h-7 w-7 object-contain"
+                      className="h-10 w-10 object-contain"
                     />
-                  ) : null}{" "}
+                  ) : null}
                 </div>
                 <span>{opt.label}</span>
               </div>

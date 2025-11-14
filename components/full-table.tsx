@@ -1,3 +1,4 @@
+"use client";
 
 import {
   createColumnHelper,
@@ -16,7 +17,6 @@ import Title from "./title";
 import FilterDropdown from "@/app/payments/fund-requests/components/filter-dropdown";
 import OverviewModalContent from "@/app/overview/components/overview-modal-content";
 import Modal from "./modal";
-
 
 type tableData = {
   productLine: string;
@@ -143,8 +143,8 @@ export default function FullTable({ tableDetails }: TableProps) {
                 info.getValue() === "Bank Transfer"
                   ? "../img/bank.svg"
                   : info.getValue() === "Mobile Money"
-                    ? "../img/mobile.svg"
-                    : "../img/cash.svg"
+                  ? "../img/mobile.svg"
+                  : "../img/cash.svg"
               }
               alt={info.getValue()}
               className="w-4 text-gray-500 sm:w-5"
@@ -223,7 +223,7 @@ export default function FullTable({ tableDetails }: TableProps) {
     }
     if (paymentFilter.length > 0) {
       result = result.filter((row) =>
-        paymentFilter.includes(row.paymentMethod),
+        paymentFilter.includes(row.paymentMethod)
       );
     }
     setFilteredData(result);
@@ -292,7 +292,7 @@ export default function FullTable({ tableDetails }: TableProps) {
                         {/* <div className="text-center w-full"> */}
                         {flexRender(
                           headers.column.columnDef.header,
-                          headers.getContext(),
+                          headers.getContext()
                         )}
                       </div>
                     </th>
@@ -312,7 +312,7 @@ export default function FullTable({ tableDetails }: TableProps) {
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext(),
+                        cell.getContext()
                       )}
                     </td>
                   ))}

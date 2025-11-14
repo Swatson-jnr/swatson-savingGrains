@@ -27,7 +27,7 @@ const TransactionDetails = ({ expense }: TransactionDetailsProps) => {
       </div>
       <div className="mb-5 flex items-center justify-between">
         <p className="text-[16px] font-normal text-[#8E8E93]">Payment Method</p>
-        <span className="text-[16px] font-semibold text-[#000]">
+        <span className="text-[16px] font-semibold text-black">
           {expense.paymentMethod}
         </span>
       </div>

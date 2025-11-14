@@ -26,9 +26,9 @@ const OverviewModalContent = ({
           <Title text="Transaction Details" level={4} weight="bold" />
           <button
             onClick={onClose}
-            className="rounded-full border p-1.5 hover:bg-gray-100"
+            className="rounded-full border border-[#D6D8DA] p-1.5 hover:bg-gray-100"
           >
-            <X size={11} />
+            <X size={12} color="#343A46" />
           </button>
         </div>
         <div className="mb-10 mt-4 border-b">
@@ -37,7 +37,7 @@ const OverviewModalContent = ({
 
         {/*  */}
         <div>
-          <div className="mb-3 flex items-center justify-between p-2.5">
+          <div className="mb-1 flex items-center justify-between p-2.5">
             <Title text="Description" level={6} weight="normal" />
             <Button
               onClick={() => setShowEditModal(true)}
@@ -45,11 +45,11 @@ const OverviewModalContent = ({
             >
               {/* <Edit2 size={16} /> */}
               <img src="../img/Pen.svg" alt="edit_icon" />
-              Edit
+              <h3 className="text-[#080808] text-[16px] font-normal">Edit</h3>
             </Button>
           </div>
           {/*  */}
-          <div className="max-h-[116px] max-w-[640px] rounded-[6px] border border-[#D6D8DA] bg-[#D6D6D633] px-5 py-7">
+          <div className="max-h-[116px] max-w-[640px] mb-40 text-black rounded-md border border-[#D6D8DA] bg-[#D6D6D633] px-5 py-7">
             <p>
               Our platform is designed to simplify complex workflows and provide
               clear insights at every stage. Each dashboard element updates in
@@ -63,6 +63,7 @@ const OverviewModalContent = ({
         visible={showEditModal}
         onClose={() => setShowEditModal(false)}
         size="md"
+        position="topSmall"
       >
         <UpdateDescriptionModal
           expense={expense}
