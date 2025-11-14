@@ -1,13 +1,14 @@
-import { NextResponse } from "next/server"
+import { NextResponse, type NextRequest } from "next/server"
 import connectDB from "@/lib/db"
 import Pickup, { IPickup } from "@/lib/models/pickup"
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await context.params   // MUST await the Promise
+
     await connectDB()
 
     const updated = await Pickup.findByIdAndUpdate<IPickup>(
@@ -24,7 +25,7 @@ export async function PATCH(
       status: updated.status,
     })
   } catch (error) {
-    console.error(`/api/inventory/pickups/${params.id}/accept error:`, error)
+    console.error(`/api/inventory/pickups/${(await context.params).id}/accept error:`, error)
     return NextResponse.json(
       { error: "Failed to accept pickup" },
       { status: 500 },
