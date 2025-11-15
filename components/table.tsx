@@ -61,7 +61,7 @@ export default function Table({ tableDetails }: TableProps) {
         </span>
       ),
       header: () => (
-        <div className="flex justify-end mr-14">
+        <div className="flex justify-end mr-16">
           <Title text="Date" level={7} weight="normal" />
         </div>
       ),
@@ -78,7 +78,7 @@ export default function Table({ tableDetails }: TableProps) {
       cell: (info) => (
         <div className="flex items-center gap-1.5 sm:gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F2F3F5] px-2.5 sm:h-9 sm:w-9 md:h-10 md:w-10">
-            <span className="text-xs font-normal text-[#000] sm:text-[13px] md:text-[15px]">
+            <span className="text-xs font-normal text-black sm:text-[13px] md:text-[15px]">
               {info
                 .getValue()
                 .split(" ")
@@ -145,7 +145,7 @@ export default function Table({ tableDetails }: TableProps) {
               className="w-4 text-gray-500 sm:w-5"
             />
           </div>
-          <span className="truncate text-xs font-normal text-[#000] sm:text-[11px] md:text-[12px]">
+          <span className="truncate text-xs font-normal text-black sm:text-[11px] md:text-[12px]">
             {info.getValue()}
           </span>
         </div>
@@ -157,7 +157,7 @@ export default function Table({ tableDetails }: TableProps) {
         <div className="flex items-center justify-center">
           <img
             src="../img/eye.svg"
-            className="w-4 cursor-pointer text-gray-500 sm:w-[14px] md:w-[16px]"
+            className="w-4 cursor-pointer text-gray-500 sm:w-3.5 md:w-4"
             onClick={() => setIsOpen(true)}
             alt="View details"
           />

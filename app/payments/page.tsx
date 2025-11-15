@@ -166,22 +166,20 @@ export default function PaymentsLayout({ children }: LayoutProps) {
     {
       icon: Mag,
       label: "Buy Stock",
+      border: "#D19FFF",
     },
+  
     {
       icon: touch,
       label: "Sell Stock",
       bgColor: "#9FEAFF4D",
-      containerbgColor: "#9FEAFF1A",
-    },
-    {
-      icon: touch,
-      label: "Sell Stock",
-      bgColor: "#9FEAFF4D",
+      border: "#9FEAFF",
       containerbgColor: "#9FEAFF1D",
     },
     {
       icon: bill,
       label: "Pay Service",
+      border: "#FF9F9F",
       bgColor: "#FF9F9F4D",
       containerbgColor: "#FF9F9F1A",
     },
@@ -189,12 +187,14 @@ export default function PaymentsLayout({ children }: LayoutProps) {
       icon: record,
       label: "Record Transaction",
       bgColor: "#FFDDA14D",
+      border: "#FFDDA1",
       containerbgColor: "#FFDDA11A",
     },
     {
       icon: request,
       label: "Request Top Up",
       bgColor: "#AED5814D",
+      border: "#AED581",
       containerbgColor: "#AED5811A",
     },
   ];
@@ -246,6 +246,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
                     label={action.label}
                     onClick={() => handleCardClick(action)}
                     bgColor={action.bgColor}
+                    border={action.border}
                     containerbgColor={action.containerbgColor}
                   />
                 ))}

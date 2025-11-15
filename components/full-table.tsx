@@ -69,7 +69,11 @@ export default function FullTable({ tableDetails }: TableProps) {
           {info.getValue()}
         </span>
       ),
-      header: () => <Title text="Date" level={7} weight="normal" />,
+      header: () => (
+        <div className="flex justify-end mr-16">
+          <Title text="Date" level={7} weight="normal" />
+        </div>
+      ),
     }),
     columnHelper.accessor("productLine", {
       cell: (info) => (

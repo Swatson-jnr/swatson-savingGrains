@@ -15,7 +15,7 @@ import Image from "next/image";
 
 // Images
 import bill from "@/public/img/cash-payment-bill-1.svg";
-import move from "@/public/img/cash-payment-bill-1.svg";
+import move from "@/public/img/move.svg";
 import receive from "@/public/img/receive.svg";
 import touch from "@/public/img/receive.svg";
 import record from "@/public/img/streamline-ultimate-color_paper-write.svg";
@@ -59,6 +59,8 @@ export default function OverviewPage({ transactions }: Props) {
       icon: Mag,
       label: "Buy Stock",
       bgColor: "#D19FFF4D",
+      border: "#D19FFF",
+
       containerbgColor: "#D19FFF1D",
       modalType: null,
     },
@@ -66,12 +68,16 @@ export default function OverviewPage({ transactions }: Props) {
       icon: touch,
       label: "Sell Stock",
       bgColor: "#9FEAFF4D",
+      border: "#9FEAFF",
+
       containerbgColor: "#9FEAFF1D",
       modalType: null,
     },
     {
       icon: bill,
       label: "Pay Service",
+      border: "#FF9F9F",
+
       bgColor: "#FF9FAF4D",
       containerbgColor: "#FF9FAF1A",
       modalType: null,
@@ -80,6 +86,7 @@ export default function OverviewPage({ transactions }: Props) {
       icon: move,
       label: "Move Stock",
       bgColor: "#B6FBDF4D",
+      border: "#B6FBDF",
       containerbgColor: "#B6FBDF1A",
       modalType: null,
     },
@@ -87,21 +94,24 @@ export default function OverviewPage({ transactions }: Props) {
       icon: receive,
       label: "Receive Stock",
       bgColor: "#9FEAFF4D",
+      border: "#9FEAFF",
       containerbgColor: "#9FEAFF1D",
       modalType: null,
     },
     {
       icon: record,
       label: "Record Transaction",
-      bgColor: "#D49FFF4D",
-      containerbgColor: "#D49FFF1A",
+      bgColor: "#FFDDA14D",
+      border: "#FFDDA1",
+      containerbgColor: "#FFDDA11A",
       modalType: "record-transaction" as ModalType,
     },
     {
       icon: request,
       label: "Request Top Up",
-      bgColor: "#FF9FEC4D",
-      containerbgColor: "#FF9FEC1A",
+      bgColor: "#AED5814D",
+      border: "#AED581",
+      containerbgColor: "#AED5811A",
       modalType: "request-topup" as ModalType,
     },
   ];
@@ -213,6 +223,7 @@ export default function OverviewPage({ transactions }: Props) {
                     }
                   }}
                   bgColor={action.bgColor}
+                  border={action.border}
                   containerbgColor={action.containerbgColor}
                 />
               ))}

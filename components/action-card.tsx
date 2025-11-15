@@ -7,12 +7,14 @@ type ActionCardProps = {
   label: string;
   onClick?: () => void;
   bgColor?: string;
+  border?: string;
   containerbgColor?: string;
 };
 
 const ActionCard: React.FC<ActionCardProps> = ({
   icon,
   label,
+  border = "#000",
   onClick,
   bgColor = "#D19FFF4D",
   containerbgColor,
@@ -20,8 +22,13 @@ const ActionCard: React.FC<ActionCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className="flex max-w-[235px] cursor-pointer items-center justify-between rounded-[8px] border border-[#D19FFF] p-2.5 transition-all hover:shadow-md"
-      style={{ backgroundColor: containerbgColor }}
+      className="flex max-w-[235px] cursor-pointer items-center justify-between rounded-lg p-2.5 transition-all hover:shadow-md"
+      style={{
+        backgroundColor: containerbgColor,
+        ...(border
+          ? { borderWidth: "1px", borderStyle: "solid", borderColor: border }
+          : {}),
+      }}
     >
       <div className="flex items-center gap-2">
         <div
