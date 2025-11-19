@@ -6,7 +6,7 @@ import OTPInput from "./otp-input";
 import React from "react";
 
 interface Props {
-  phone: string;
+  phone?: string;
   passcode: string;
   processing: boolean;
   errors: Record<string, string>;

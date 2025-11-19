@@ -41,7 +41,7 @@ const OverviewModalContent = ({
             <Title text="Description" level={6} weight="normal" />
             <Button
               onClick={() => setShowEditModal(true)}
-              className="flex w-[104px] items-center gap-3 rounded-[100px] border border-black bg-white text-[#000] shadow-none hover:bg-white"
+              className="flex w-[104px] items-center gap-3 p-2.5 cursor-pointer rounded-[100px] border border-black bg-white text-[#000] shadow-none hover:bg-white"
             >
               {/* <Edit2 size={16} /> */}
               <img src="../img/Pen.svg" alt="edit_icon" />

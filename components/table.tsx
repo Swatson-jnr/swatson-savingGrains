@@ -214,7 +214,7 @@ export default function Table({ tableDetails }: TableProps) {
     <>
       <div className="scrollbar-hide mx-auto flex min-h-screen flex-col">
         {/* ......Table Container....... */}
-        <div className="overflow-x-hidden rounded-lg border bg-white shadow-sm">
+        <div className="overflow-x-hidden rounded-lg bg-white shadow-sm">
           <table className="w-full min-w-[800px] divide-y divide-gray-200">
             <thead className="whitespace-nowrap border border-[#E2E2E2] bg-[#F6F6F7]">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -245,7 +245,7 @@ export default function Table({ tableDetails }: TableProps) {
             </thead>
 
             {/* ....Table Body.......... */}
-            <tbody className="divide-y divide-gray-200 border bg-white text-center">
+            <tbody className="divide-y divide-gray-200 border border-[#D6D8DA] bg-white text-center">
               {table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (

@@ -1,7 +1,6 @@
 import { CalendarIcon, X } from "lucide-react";
 import React, { useState } from "react";
 import DatePicker from "react-flatpickr";
-import cash from "@/public/img/grain.svg";
 import ProgressSteps from "./progress-bar";
 import RecordConfirmationDetails from "./record-confirmation-details";
 import SelectInput from "./select-input";
@@ -16,7 +15,7 @@ interface RecordTopUpModalProps {
   onClose: () => void;
 }
 
-const RecordTopUPModal: React.FC<RecordTopUpModalProps> = ({
+const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
   visible,
   onClose,
 }) => {
@@ -29,7 +28,7 @@ const RecordTopUPModal: React.FC<RecordTopUpModalProps> = ({
   const [phone, setPhone] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const steps = [
-    { title: "Request details", subtitle: "Enter request info" },
+    { title: "Service details", subtitle: "Enter service info" },
     { title: "Confirmation", subtitle: "Review and confirm" },
   ];
 
@@ -117,11 +116,11 @@ const RecordTopUPModal: React.FC<RecordTopUpModalProps> = ({
           visible={visible}
           onClose={handleCancel}
           closeOnBackgroundClick={true}
-          panelClassName="!max-w-full sm:!max-w-[800px] md:!max-w-[1003px] sm:!max-h-[800px] md:!max-h-[987px] !overflow-visible"
+          panelClassName="!max-w-full sm:!max-w-[800px] md:!max-w-[1003px] sm:!max-h-[800px] md:!h-[987px] lg:!max-h-[10907px] !overflow-visible"
         >
           <div className="flex min-h-full text-black">
             {/* Left side - Progress & Titles */}
-            <div className="flex max-h-[987px] flex-col self-stretch border-r border-[#E7B00E] px-7 py-9">
+            <div className="flex max-h-[987px] flex-col self-stretch bg-[#FDFEF5] rounded-l-2xl rounded-bl-2xl  border-r border-[#E7B00E] px-7 py-9">
               <div>
                 <Title text="Record Transaction" weight="bold" level={4} />
                 <h2 className="mb-2 text-[16px] font-medium text-[#5D616B]">
@@ -155,7 +154,7 @@ const RecordTopUPModal: React.FC<RecordTopUpModalProps> = ({
                         htmlFor="amount"
                         className="text-[14px] font-normal text-[#343A46]"
                       >
-                        What service are paying for?
+                        What service are you paying for?
                       </label>
                       <SelectInput
                         placeholder="Select service "
@@ -315,6 +314,34 @@ const RecordTopUPModal: React.FC<RecordTopUpModalProps> = ({
                       Back
                     </Button>
                     <Button onClick={onClose}>Submit</Button>
+
+                    <svg
+                      className="absolute bottom-0 left-0 w-full"
+                      height="30"
+                      viewBox="0 0 400 30"
+                      preserveAspectRatio="none"
+                      style={{
+                        filter: "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))",
+                      }}
+                    >
+                      <defs>
+                        <pattern
+                          id="tear"
+                          x="0"
+                          y="0"
+                          width="40"
+                          height="30"
+                          patternUnits="userSpaceOnUse"
+                        >
+                          <path
+                            d="M0,0 Q10,15 20,0 T40,0"
+                            fill="white"
+                            stroke="none"
+                          />
+                        </pattern>
+                      </defs>
+                      <rect width="400" height="30" fill="url(#tear)" />
+                    </svg>
                   </div>
                 </>
               )}
@@ -326,4 +353,4 @@ const RecordTopUPModal: React.FC<RecordTopUpModalProps> = ({
   );
 };
 
-export default RecordTopUPModal;
+export default RecordTransactionModal;

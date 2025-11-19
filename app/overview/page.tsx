@@ -11,7 +11,6 @@ import { AppLayout } from "../layout/app";
 
 import dayjs from "dayjs";
 import { useState } from "react";
-import Image from "next/image";
 
 // Images
 import bill from "@/public/img/cash-payment-bill-1.svg";
@@ -29,8 +28,20 @@ import ionReceipt from "@/public/img/ion_receipt.svg";
 import AuthGuard from "@/components/auth/auth-guard";
 import RequestTopUpModal from "./components/request-topup-modal";
 import Link from "next/link";
+import RecordTransactionModal from "./components/record-topup-modal";
+import PayServiceModal from "./components/pay-service-modal";
+import MoveStockModal from "./components/move-stock-modal";
+import ReceiveStockModal from "./components/receive-stock-modal";
+import SellStockModal from "./components/sell-stock-modal";
 
-type ModalType = "request-topup" | "record-transaction" | null;
+type ModalType =
+  | "request-topup"
+  | "record-transaction"
+  | "pay-service"
+  | "sell-stock"
+  | "move-stock"
+  | "receive-stock"
+  | null;
 
 type Props = {
   transactions: {
@@ -60,27 +71,24 @@ export default function OverviewPage({ transactions }: Props) {
       label: "Buy Stock",
       bgColor: "#D19FFF4D",
       border: "#D19FFF",
-
       containerbgColor: "#D19FFF1D",
-      modalType: null,
+      modalType: "buy-stock" as ModalType,
     },
     {
       icon: touch,
       label: "Sell Stock",
       bgColor: "#9FEAFF4D",
       border: "#9FEAFF",
-
       containerbgColor: "#9FEAFF1D",
-      modalType: null,
+      modalType: "sell-stock" as ModalType,
     },
     {
       icon: bill,
       label: "Pay Service",
       border: "#FF9F9F",
-
       bgColor: "#FF9FAF4D",
       containerbgColor: "#FF9FAF1A",
-      modalType: null,
+      modalType: "pay-service" as ModalType,
     },
     {
       icon: move,
@@ -88,7 +96,7 @@ export default function OverviewPage({ transactions }: Props) {
       bgColor: "#B6FBDF4D",
       border: "#B6FBDF",
       containerbgColor: "#B6FBDF1A",
-      modalType: null,
+      modalType: "move-stock" as ModalType,
     },
     {
       icon: receive,
@@ -96,7 +104,7 @@ export default function OverviewPage({ transactions }: Props) {
       bgColor: "#9FEAFF4D",
       border: "#9FEAFF",
       containerbgColor: "#9FEAFF1D",
-      modalType: null,
+      modalType: "receive-stock" as ModalType,
     },
     {
       icon: record,
@@ -207,7 +215,7 @@ export default function OverviewPage({ transactions }: Props) {
           </div>
 
           {/* Action Cards */}
-          <div className="mb-4 rounded-[20px] border px-5 py-5">
+          <div className="mb-4 rounded-[20px] border border-[#D6D8DA] px-5 py-5">
             <div className="mb-3">
               <Title text="Quick Actions" weight="semibold" level={6} />
             </div>
@@ -248,8 +256,26 @@ export default function OverviewPage({ transactions }: Props) {
           onClose={() => setActiveModal(null)}
         />
 
-        <RecordTopUPModal
+        <RecordTransactionModal
           visible={activeModal === "record-transaction"}
+          onClose={() => setActiveModal(null)}
+        />
+
+        {/* <PayServiceModal
+          visible={activeModal === "pay-service"}
+          onClose={() => setActiveModal(null)}
+        /> */}
+
+        {/* <MoveStockModal
+          visible={activeModal === "move-stock"}
+          onClose={() => setActiveModal(null)}
+        /> */}
+        {/* <ReceiveStockModal
+          visible={activeModal === "receive-stock"}
+          onClose={() => setActiveModal(null)}
+        /> */}
+        <SellStockModal
+          visible={activeModal === "sell-stock"}
           onClose={() => setActiveModal(null)}
         />
       </AppLayout>

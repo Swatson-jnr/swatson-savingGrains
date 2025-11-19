@@ -220,18 +220,44 @@ export default function FullTable({ tableDetails }: TableProps) {
     setPaymentFilter(selectedIds);
   };
 
+  // useEffect(() => {
+  //   let result = [...tableDetails];
+  //   if (roleFilter.length > 0) {
+  //     result = result.filter((row) => roleFilter.includes(row.role));
+  //   }
+  //   if (paymentFilter.length > 0) {
+  //     result = result.filter((row) =>
+  //       paymentFilter.includes(row.paymentMethod)
+  //     );
+  //   }
+  //   setFilteredData(result);
+  // }, [roleFilter, paymentFilter, tableDetails]);
   useEffect(() => {
     let result = [...tableDetails];
+
+    // Role filter
     if (roleFilter.length > 0) {
       result = result.filter((row) => roleFilter.includes(row.role));
     }
+
+    // Payment filter
     if (paymentFilter.length > 0) {
       result = result.filter((row) =>
         paymentFilter.includes(row.paymentMethod)
       );
     }
+
+    // ✅ Date range filter
+    if (dateRange.length === 2) {
+      const [startDate, endDate] = dateRange;
+      result = result.filter((row) => {
+        const rowDate = new Date(row.date);
+        return rowDate >= startDate && rowDate <= endDate;
+      });
+    }
+
     setFilteredData(result);
-  }, [roleFilter, paymentFilter, tableDetails]);
+  }, [roleFilter, paymentFilter, dateRange, tableDetails]); // ✅ Add dateRange to dependencies
 
   return (
     <>
@@ -275,7 +301,7 @@ export default function FullTable({ tableDetails }: TableProps) {
         </div>
 
         {/* ......Table Container....... */}
-        <div className="overflow-x-hidden rounded-lg border bg-white shadow-sm">
+        <div className="overflow-x-hidden rounded-lg bg-white shadow-sm">
           <table className="w-full min-w-[800px] divide-y divide-gray-200">
             <thead className="whitespace-nowrap border border-[#E2E2E2] bg-[#F6F6F7]">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -306,7 +332,7 @@ export default function FullTable({ tableDetails }: TableProps) {
             </thead>
 
             {/* ....Table Body.......... */}
-            <tbody className="divide-y divide-gray-200 border bg-white text-center">
+            <tbody className="divide-y divide-gray-200 bg-white text-center">
               {table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (

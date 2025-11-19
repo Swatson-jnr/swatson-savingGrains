@@ -8,7 +8,6 @@ import ActionCard from "../../components/action-card";
 import Title from "../../components/title";
 import { Button } from "../../components/ui/button";
 import { AppLayout } from "../layout/app";
-// import { AppLayout } from "../../layouts/app";
 import InventoryCard from "./components/inventory-cards";
 import PendingPickupCard from "./components/pending-pickup-card";
 import RecentActivityCard from "./components/recent-activity";
@@ -48,18 +47,21 @@ const index = () => {
       icon: Mag,
       label: "Buy Stock",
       bgColor: "#D19FFF4D",
+      border: "#D19FFF",
       containerbgColor: "#D19FFF1D",
     },
     {
       icon: move,
       label: "Move Stock",
       bgColor: "#B6FBDF4D",
+      border: "#B6FBDF",
       containerbgColor: "#B6FBDF1A",
     },
     {
       icon: receive,
       label: "Receive Stock",
       bgColor: "#9FEAFF4D",
+      border: "#9FEAFF",
       containerbgColor: "#9FEAFF1A",
     },
   ];
@@ -138,7 +140,7 @@ const index = () => {
                 />
               ))}
             </div>
-            <div className="mb-4 rounded-[20px] border px-5 py-5">
+            <div className="mb-4 rounded-[20px] border border-[#D6D8DA] px-5 py-5">
               <div className="mb-3">
                 <Title text="Quick Actions" weight="semibold" level={6} />
               </div>
@@ -150,6 +152,7 @@ const index = () => {
                     icon={action.icon}
                     label={action.label}
                     bgColor={action.bgColor}
+                    border={action.border}
                     containerbgColor={action.containerbgColor}
                   />
                 ))}
@@ -164,7 +167,7 @@ const index = () => {
                     <Button className="bg-[#E7B00E]">View All</Button>
                   </Link>
                 </div>
-                <div className="space-y-3 rounded-[12px] border border-[#D6D8DA] px-5 py-5">
+                <div className="space-y-3 rounded-xl border border-[#D6D8DA] px-5 py-5">
                   {transactions.map((txn) => (
                     <PendingPickupCard
                       key={txn.id}
@@ -190,7 +193,7 @@ const index = () => {
                 </div>
 
                 {/*......Recent Transaction card......*/}
-                <div className="space-y-3 rounded-[12px] border border-[#D6D8DA] px-5 py-5">
+                <div className="space-y-3 rounded-xl border border-[#D6D8DA] px-5 py-5">
                   {transactions.map((txn) => (
                     <RecentActivityCard
                       key={txn.id}

@@ -164,8 +164,16 @@ export default function PickupTable({ tableDetails }: TableProps) {
     if (paymentFilter.length > 0) {
       result = result.filter((row) => paymentFilter.includes(row.transferType));
     }
+
+    if (dateRange.length === 2) {
+      const [startDate, endDate] = dateRange;
+      result = result.filter((row) => {
+        const rowDate = new Date(row.date);
+        return rowDate >= startDate && rowDate <= endDate;
+      });
+    }
     setFilteredData(result);
-  }, [roleFilter, paymentFilter, tableDetails]);
+  }, [roleFilter, paymentFilter, dateRange, tableDetails]);
 
   return (
     <>
@@ -201,7 +209,7 @@ export default function PickupTable({ tableDetails }: TableProps) {
         </div>
 
         {/* ......Table Container....... */}
-        <div className="overflow-x-hidden rounded-lg border bg-white shadow-sm">
+        <div className="overflow-x-hidden rounded-lg bg-white shadow-sm">
           <table className="w-full min-w-[800px] divide-y divide-gray-200">
             <thead className="whitespace-nowrap border border-[#E2E2E2] bg-[#F6F6F7]">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -232,7 +240,7 @@ export default function PickupTable({ tableDetails }: TableProps) {
             </thead>
 
             {/* ....Table Body.......... */}
-            <tbody className="divide-y divide-gray-200 border bg-white">
+            <tbody className="divide-y divide-gray-200 border border-[#D6D8DA] bg-white">
               {table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (

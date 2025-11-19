@@ -1,5 +1,3 @@
-// import Title from "@base/resources/js/components/title";
-// import { Button } from "@base/resources/js/components/ui/button";
 import Title from "@/components/title";
 import { Button } from "@/components/ui/button";
 import { Expense } from "@/types";
@@ -20,9 +18,9 @@ const UpdateDescriptionModal = ({
         <Title text="Update Description" level={4} weight="bold" />
         <button
           onClick={onClose}
-            className="rounded-full border border-[#D6D8DA] p-1.5 hover:bg-gray-100"
+          className="rounded-full border border-[#D6D8DA] p-1.5 hover:bg-gray-100"
         >
-            <X size={12} color="#343A46"/>
+          <X size={12} color="#343A46" />
         </button>
       </div>
 
@@ -41,11 +39,11 @@ const UpdateDescriptionModal = ({
         <Button
           variant="outline"
           onClick={onClose}
-          className="max-h-[48px] w-[200px] bg-white rounded-[8px] border-[#080808] text-[13px] text-[#080808]"
+          className="max-h-12 cursor-pointer  w-[200px] bg-white rounded-lg border-[#080808] text-[13px] text-[#080808]"
         >
           Cancel
         </Button>
-        <Button className="px-13 max-h-[48px] w-[200px] py-4 text-[13px]">
+        <Button className="px-13 max-h-12 cursor-pointer  w-[200px] py-4 text-[13px]">
           Save Changes
         </Button>
       </div>

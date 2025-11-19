@@ -254,8 +254,23 @@ export default function FundTable({ fundDetails }: FundTableProps) {
           .includes(row.status.toLowerCase())
       );
     }
+
+    if (dateRange.length === 2) {
+      const [startDate, endDate] = dateRange;
+      result = result.filter((row) => {
+        const rowDate = new Date(row.date);
+        return rowDate >= startDate && rowDate <= endDate;
+      });
+    }
     setFilteredData(result);
-  }, [roleFilter, paymentFilter, statusFilter, dateRange, fundDetails]);
+  }, [
+    roleFilter,
+    paymentFilter,
+    dateRange,
+    statusFilter,
+    dateRange,
+    fundDetails,
+  ]);
 
   return (
     <>
@@ -335,7 +350,7 @@ export default function FundTable({ fundDetails }: FundTableProps) {
             </thead>
 
             {/* ....Table Body.......... */}
-            <tbody className="divide-y divide-gray-200 border bg-white">
+            <tbody className="divide-y divide-gray-200  bg-white">
               {table.getRowModel().rows.map((row) => (
                 <tr key={row.id} className="hover:bg-gray-50">
                   {row.getVisibleCells().map((cell) => (

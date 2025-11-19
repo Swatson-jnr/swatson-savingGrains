@@ -31,6 +31,9 @@ import { AppLayout } from "../layout/app";
 import axios from "axios";
 import apiClient from "@/lib/axios";
 import AuthGuard from "@/components/auth/auth-guard";
+import PayServiceModal from "../overview/components/pay-service-modal";
+import SellStockModal from "../overview/components/sell-stock-modal";
+import BuyStockModal from "../overview/components/buy-stock-modal";
 
 interface PageProps {
   wallets?: any;
@@ -168,7 +171,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
       label: "Buy Stock",
       border: "#D19FFF",
     },
-  
+
     {
       icon: touch,
       label: "Sell Stock",
@@ -180,8 +183,9 @@ export default function PaymentsLayout({ children }: LayoutProps) {
       icon: bill,
       label: "Pay Service",
       border: "#FF9F9F",
-      bgColor: "#FF9F9F4D",
-      containerbgColor: "#FF9F9F1A",
+      bgColor: "#FF9FAF4D",
+      containerbgColor: "#FF9FAF1A",
+      // modalType: "pay-service" as ModalType,
     },
     {
       icon: record,
@@ -231,7 +235,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
             </div>
 
             {/* ....Actions...... */}
-            <div className="mb-4 rounded-[20px] border px-5 py-4">
+            <div className="mb-4 rounded-[20px] border border-[#D6D8DA] px-5 py-4">
               <div className="pb-2">
                 <Title text="Action" level={6} weight="semibold" />
               </div>
@@ -325,6 +329,30 @@ export default function PaymentsLayout({ children }: LayoutProps) {
               />
             </>
           )}
+          {/* {selectedCard?.label === "Pay Service" && (
+            <>
+              <PayServiceModal
+                visible={openModal}
+                onClose={handleCloseModal}
+              />
+            </>
+          )} */}
+          {selectedCard?.label === "Sell Stock" && (
+            <>
+              <SellStockModal
+                visible={openModal}
+                onClose={handleCloseModal}
+              />
+            </>
+          )}
+          {/* {selectedCard?.label === "Buy Stock" && (
+            <>
+              <BuyStockModal
+                visible={openModal}
+                onClose={handleCloseModal}
+              />
+            </>
+          )} */}
         </AppLayout>
       </AuthGuard>
     </>

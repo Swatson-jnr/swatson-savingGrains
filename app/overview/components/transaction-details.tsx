@@ -26,23 +26,12 @@ const TransactionDetails = ({ expense }: TransactionDetailsProps) => {
         </span>
       </div>
       <div className="mb-5 flex items-center justify-between">
-        <p className="text-[16px] font-normal text-[#8E8E93]">Payment Method</p>
+        <p className="text-[16px] font-normal text-[#8E8E93]">Business Line</p>
         <span className="text-[16px] font-semibold text-black">
-          {expense.paymentMethod}
-        </span>
-      </div>
-      <div className="mb-5 flex items-center justify-between">
-        <p className="text-[16px] font-normal text-[#8E8E93]">Business Line</p>
-        <span className="text-[16px] font-semibold text-[#000]">
           {expense.businessLine}
         </span>
       </div>
-      <div className="mb-5 flex items-center justify-between">
-        <p className="text-[16px] font-normal text-[#8E8E93]">Business Line</p>
-        <span className="text-[16px] font-semibold text-[#000]">
-          {expense.businessLine}
-        </span>
-      </div>
+
       <div className="mb-5 flex items-center justify-between">
         <p className="text-[16px] font-normal text-[#8E8E93]">
           Expense Category
@@ -51,6 +40,12 @@ const TransactionDetails = ({ expense }: TransactionDetailsProps) => {
           {expense.expenseCategory}
         </span>
       </div>
+      {/* <div className="mb-5 flex items-center justify-between">
+        <p className="text-[16px] font-normal text-[#8E8E93]">Business Line</p>
+        <span className="text-[16px] font-semibold text-[#000]">
+          {expense.businessLine}
+        </span>
+      </div> */}
       <div className="mb-5 flex items-center justify-between">
         <p className="text-[16px] font-normal text-[#8E8E93]">Product Line</p>
         <span className="text-[16px] font-semibold text-[#000]">
@@ -64,11 +59,17 @@ const TransactionDetails = ({ expense }: TransactionDetailsProps) => {
         </span>
       </div>
       <div className="mb-5 flex items-center justify-between">
+        <p className="text-[16px] font-normal text-[#8E8E93]">Payment Method</p>
+        <span className="text-[16px] font-semibold text-[#000]">
+          {expense.paymentMethod}
+        </span>
+      </div>
+      {/* <div className="mb-5 flex items-center justify-between">
         <p className="text-[16px] font-normal text-[#8E8E93]">Amount</p>
         <span className="text-[16px] font-semibold text-[#000]">
           {expense.amount}
         </span>
-      </div>
+      </div> */}
       <div className="mb-5 flex items-center justify-between">
         <p className="text-[16px] font-normal text-[#8E8E93]">Account Number</p>
         <span className="text-[16px] font-semibold text-[#000]">
