@@ -28,6 +28,7 @@ export const Success: React.FC<Props> = ({
   onSubmit,
 }) => {
   const sellAgainHandler = () => {
+    reset();
     setCurrentStep(1);
   };
   const handleDone = () => {
