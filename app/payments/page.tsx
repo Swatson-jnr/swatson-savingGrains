@@ -264,7 +264,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
                 <div className="mb-3 flex items-center justify-between">
                   <Title text="Fund Requests" level={5} />
                   <Link href="/payments/fund-requests">
-                    <Button className="bg-[#E7B00E]">View All</Button>
+                    <Button className="bg-[#E7B00E] text-white">View All</Button>
                   </Link>
                 </div>
                 <div className="space-y-3 rounded-xl border border-[#D6D8DA] px-5 py-5">
@@ -292,7 +292,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
                 <div className="mb-3 flex items-center justify-between">
                   <Title text="Recent Transactions" level={5} />
                   <Link href="/overview/transactions">
-                    <Button>View All</Button>
+                    <Button className="text-white">View All</Button>
                   </Link>
                 </div>
 
@@ -329,14 +329,14 @@ export default function PaymentsLayout({ children }: LayoutProps) {
               />
             </>
           )}
-          {/* {selectedCard?.label === "Pay Service" && (
+          {selectedCard?.label === "Pay Service" && (
             <>
               <PayServiceModal
                 visible={openModal}
                 onClose={handleCloseModal}
               />
             </>
-          )} */}
+          )}
           {selectedCard?.label === "Sell Stock" && (
             <>
               <SellStockModal

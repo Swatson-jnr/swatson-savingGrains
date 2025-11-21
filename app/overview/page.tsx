@@ -261,19 +261,19 @@ export default function OverviewPage({ transactions }: Props) {
           onClose={() => setActiveModal(null)}
         />
 
-        {/* <PayServiceModal
+        <PayServiceModal
           visible={activeModal === "pay-service"}
           onClose={() => setActiveModal(null)}
-        /> */}
+        />
 
-        {/* <MoveStockModal
+        <MoveStockModal
           visible={activeModal === "move-stock"}
           onClose={() => setActiveModal(null)}
-        /> */}
-        {/* <ReceiveStockModal
+        />
+        <ReceiveStockModal
           visible={activeModal === "receive-stock"}
           onClose={() => setActiveModal(null)}
-        /> */}
+        />
         <SellStockModal
           visible={activeModal === "sell-stock"}
           onClose={() => setActiveModal(null)}

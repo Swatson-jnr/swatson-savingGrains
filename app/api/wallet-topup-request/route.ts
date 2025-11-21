@@ -319,7 +319,8 @@ export const POST = async (req: NextRequest) => {
       return validation.response;
     }
 
-    const { amount, payment_method, reason } = validation.data;
+    const { amount, reason } = validation.data;
+    // payment_method,
 
     // Try to connect to MongoDB
     try {
@@ -351,7 +352,7 @@ export const POST = async (req: NextRequest) => {
     const walletRequest = await WalletRequest.create({
       user: user.id,
       amount,
-      payment_method: payment_method || null,
+      // payment_method: payment_method || null,
       reason: reason || undefined,
       status: isPrivileged
         ? WalletRequestStatus.APPROVED

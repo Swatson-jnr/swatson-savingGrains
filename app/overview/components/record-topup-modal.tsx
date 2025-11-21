@@ -9,12 +9,20 @@ import { Button } from "@/components/ui/button";
 import Modal from "@/components/modal";
 import Title from "@/components/title";
 import "flatpickr/dist/themes/material_blue.css";
+import apiClient from "@/lib/axios";
+import axios from "axios";
+import { toast } from "sonner";
+import { format } from "path";
 
 interface RecordTopUpModalProps {
   visible: boolean;
   onClose: () => void;
 }
 
+interface userName {
+  firstName: string;
+  lastName: string;
+}
 const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
   visible,
   onClose,
@@ -22,6 +30,10 @@ const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
   const [currentStep, setCurrentStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amount, setAmount] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [grainType, setGrainType] = useState("");
+  const [quantity, setQuantity] = useState("");
+
   const [service, setService] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
@@ -32,6 +44,14 @@ const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
     { title: "Confirmation", subtitle: "Review and confirm" },
   ];
 
+  const formatDate = (d: Date | undefined) => {
+  if (!d) return "";
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0"); // months are 0-indexed
+  const year = d.getFullYear();
+  return `${day}/ ${month}/ ${year}`;
+};
+
   const handleContinue = () => {
     const newErrors: Record<string, string> = {};
 
@@ -40,17 +60,6 @@ const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
     if (!date) newErrors.date = "Please select transaction date";
     if (!paymentMethod)
       newErrors.paymentMethod = "Please select a payment method";
-
-    // if (paymentMethod === "Mobile Money") {
-    //   if (!provider) newErrors.provider = "Please select a provider";
-    //   if (!phone) newErrors.phone = "Please enter your mobile number";
-    // }
-
-    // if (paymentMethod === "Bank Transfer") {
-    //   if (!service) newErrors.bank = "Please select a bank";
-    //   if (!description) newErrors.branch = "Please select a branch";
-    //   if (!phone) newErrors.phone = "Please enter your account number";
-    // }
 
     if (!description)
       newErrors.description = "Please provide transaction's description";
@@ -80,6 +89,63 @@ const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
     onClose();
   };
 
+  const storedUser =
+    typeof window !== "undefined" ? localStorage.getItem("user") : null;
+
+  const userName: userName = storedUser
+    ? JSON.parse(storedUser)
+    : { firstName: "", lastName: "" };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setErrors({});
+
+    try {
+      const response = await apiClient.post("transactions", {
+        label: service,
+        date: date,
+        user: userName.firstName + " " + userName.lastName,
+        amount: parseFloat(amount),
+        status: "success",
+        currency: "GHS",
+        paymentType: paymentMethod,
+        // counterparty: phone || "",
+        description: description,
+        metadata: {
+          recordedAt: new Date().toISOString(),
+        },
+      });
+
+      const data = await response.data;
+
+      if (!data || data.error) {
+        throw new Error(data?.error || "Failed to submit request");
+      }
+      toast.success("Transaction record submitted successfully");
+      // Success - reset form and close modal
+      resetForm();
+      onClose();
+
+      // Optional: Show success message/toast here
+      console.log("Transaction created successfully:", response.data.data);
+    } catch (error) {
+      console.error("Error creating transaction:", error);
+
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.error || error.message;
+        setErrors({
+          submit: errorMessage,
+        });
+      } else {
+        setErrors({
+          submit: "Failed to create transaction. Please try again.",
+        });
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   const serviceOptions = [
     {
       value: "Grain Purchase",
@@ -100,13 +166,12 @@ const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
     },
   ];
 
-  const expenses = {
-    service: service,
+  const details = {
+   service: service,
+    amount: amount,
     description: description,
-    paymentDate: date,
-    amountPaid: amount,
     paymentMethod: paymentMethod,
-    accountNumber: phone,
+    paymentDate: formatDate(date),
   };
 
   return (
@@ -178,7 +243,7 @@ const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
                     <div className="flex flex-col gap-3">
                       <label>Amount paid</label>
                       <input
-                        className="h-[48px] max-w-[572px] rounded-[8px] border border-[#5D616B] p-5 text-[14px] font-medium outline-none"
+                        className="h-12 max-w-[572px] rounded-lg border border-[#5D616B] p-5 text-[14px] font-medium outline-none"
                         id="amount"
                         type="text"
                         required
@@ -201,7 +266,7 @@ const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
                       <FloatingLabelInput
                         label="Enter description"
                         name="description"
-                        className="h-[48px] max-w-[572px] rounded-[8px] border border-[#5D616B] p-5 text-[14px] font-medium outline-none"
+                        className="h-12 max-w-[572px] rounded-lg border border-[#5D616B] p-5 text-[14px] font-medium outline-none"
                         value={description}
                         onChange={(e) => {
                           setDescription(e.target.value);
@@ -302,46 +367,18 @@ const RecordTransactionModal: React.FC<RecordTopUpModalProps> = ({
                       <h1 className="text-[17px] font-bold text-[#343A46]">
                         Summary
                       </h1>
-                      <RecordConfirmationDetails expense={expenses} />
+                      <RecordConfirmationDetails details={details} />
                     </div>
                   </div>
 
                   <div className="mt-auto flex justify-end gap-3 pt-10">
                     <Button
-                      className="bg-white text-[#000] hover:bg-white"
+                      className="bg-white text-black hover:bg-white"
                       onClick={() => setCurrentStep(1)}
                     >
                       Back
                     </Button>
-                    <Button onClick={onClose}>Submit</Button>
-
-                    <svg
-                      className="absolute bottom-0 left-0 w-full"
-                      height="30"
-                      viewBox="0 0 400 30"
-                      preserveAspectRatio="none"
-                      style={{
-                        filter: "drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))",
-                      }}
-                    >
-                      <defs>
-                        <pattern
-                          id="tear"
-                          x="0"
-                          y="0"
-                          width="40"
-                          height="30"
-                          patternUnits="userSpaceOnUse"
-                        >
-                          <path
-                            d="M0,0 Q10,15 20,0 T40,0"
-                            fill="white"
-                            stroke="none"
-                          />
-                        </pattern>
-                      </defs>
-                      <rect width="400" height="30" fill="url(#tear)" />
-                    </svg>
+                    <Button onClick={handleSubmit}>Submit</Button>
                   </div>
                 </>
               )}

@@ -5,27 +5,21 @@ import React from "react";
 import Title from "./title";
 
 interface Props {
-  phone?: string;
-  passcode: string;
   setCurrentStep(step: number): void;
   processing: boolean;
+  buttonText: string;
   onClose: () => void;
-  errors: Record<string, string>;
-  onPasscodeChange: (val: string) => void;
   onSubmit: () => void;
   reset: () => void;
 }
 
 export const Success: React.FC<Props> = ({
-  phone,
   onClose,
-  passcode,
   setCurrentStep,
+  buttonText,
   processing,
   reset,
-  errors,
-  onPasscodeChange,
-  onSubmit,
+
 }) => {
   const sellAgainHandler = () => {
     reset();
@@ -57,36 +51,20 @@ export const Success: React.FC<Props> = ({
           </p>
         </div>
 
-        {/* Error Message */}
-        {/* {errors.reason && (
-          <span className="text-sm text-red-500 text-center">
-            {errors.reason}
-          </span>
-        )} */}
-
-        {/* Forgot PIN */}
-        {/* <div className="text-center">
-        <p className="text-[#343A46] text-[16px] font-semibold underline pb-1 mt-1">
-          Forgot your PIN?
-        </p>
-      </div> */}
-
         {/* Continue Button */}
         <div className="flex w-[350px] mx-auto justify-between gap-3 pt-10 mt-10">
           <Button
             type="submit"
             onClick={sellAgainHandler}
             block
-            // disabled={processing || passcode.length > 5}
             className="w-[162px] h-12 text-center bg-white text-[#E7B00E] hover:bg-white cursor-pointer"
           >
-            {processing ? "Verifying..." : "Sell Again"}
+            {processing ? "Verifying..." : buttonText}
           </Button>
           <Button
             type="submit"
             onClick={handleDone}
             block
-            disabled={processing || passcode.length > 5}
             className="w-[162px] h-12 text-center bg-[#E7B00E] text-white cursor-pointer"
           >
             {processing ? "Verifying..." : "Done"}

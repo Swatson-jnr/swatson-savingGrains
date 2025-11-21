@@ -13,6 +13,7 @@ interface SelectInputProps {
   name: string;
   placeholder?: string;
   icon?: string;
+    className?: string; 
   options: Option[];
   onChange?: (value: string) => void;
   value?: string;
@@ -25,6 +26,7 @@ const SelectInput = ({
   options,
   icon,
   placeholder,
+  className,
   onChange,
   value,
   showBackground = true,
@@ -46,9 +48,9 @@ const SelectInput = ({
   }, []);
 
   return (
-    <div className="flex flex-col gap-3" ref={ref}>
+    <div className="flex flex-col gap-3 w-full z-99999" ref={ref}>
       {label && <label htmlFor={name}>{label}</label>}
-      <div className="relative max-w-[572px]">
+<div className={`relative ${className || "max-w-[572px]"}`}>
         {/* Trigger button */}
         <button
           type="button"
@@ -57,13 +59,14 @@ const SelectInput = ({
         >
           {selected ? (
             <div className="flex items-center gap-2">
-              <span>{selected.label}</span>
+              <span className="text-[#080808]">{selected.label}</span>
             </div>
           ) : (
             <span className="text-gray-400">{placeholder}</span>
           )}
           <ChevronDown
             className={`transition-transform ${isOpen ? "rotate-180" : ""}`}
+            color="#080808"
             size={18}
           />
         </button>
@@ -98,7 +101,7 @@ const SelectInput = ({
                     />
                   ) : null}
                 </div>
-                <span>{opt.label}</span>
+                <span className="text-[#343A46] text-sm font-normal">{opt.label}</span>
               </div>
             ))}
           </div>

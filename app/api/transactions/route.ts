@@ -1,6 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/db";
-// import Transaction, { ITransaction } from "@/lib/models/transaction";
 import type { FilterQuery } from "mongoose";
 import Transaction, { ITransaction } from "@/lib/models/transaction";
 
@@ -65,5 +64,98 @@ export async function GET(request: Request) {
       { error: "Failed to fetch transactions" },
       { status: 500 }
     );
+  }
+}
+
+
+// import { NextRequest, NextResponse } from "next/server"
+// import mongoose from "mongoose"
+// import Transaction, { ITransaction } from "@/models/Transaction"
+
+
+export async function POST(req: NextRequest) {
+  try {
+    // Connect to database
+    await connectDB()
+
+    // Parse request body
+    const body = await req.json()
+
+    // Validate required fields
+    const { label, user, amount, currency } = body
+
+    if (!label || !user || amount === undefined) {
+      return NextResponse.json(
+        { error: "Missing required fields: label, user, and amount are required" },
+        { status: 400 }
+      )
+    }
+
+    // Validate amount is a number
+    if (typeof amount !== "number" || isNaN(amount)) {
+      return NextResponse.json(
+        { error: "Amount must be a valid number" },
+        { status: 400 }
+      )
+    }
+
+    // Validate status if provided
+    if (body.status && !["success", "failed", "pending"].includes(body.status)) {
+      return NextResponse.json(
+        { error: "Status must be one of: success, failed, pending" },
+        { status: 400 }
+      )
+    }
+
+    // Create transaction data object
+    const transactionData: Partial<ITransaction> = {
+      label,
+      user,
+      amount,
+      currency: currency || "GHS",
+      status: body.status || "success",
+      ...(body.date && { date: new Date(body.date) }),
+      ...(body.paymentType && { paymentType: body.paymentType }),
+      ...(body.counterparty && { counterparty: body.counterparty }),
+      ...(body.description && { description: body.description }),
+      ...(body.metadata && { metadata: body.metadata }),
+    }
+
+    // Create new transaction
+    const transaction = await Transaction.create(transactionData)
+
+    // Return success response
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Transaction created successfully",
+        data: transaction,
+      },
+      { status: 201 }
+    )
+  } catch (error) {
+    console.error("Transaction creation error:", error)
+
+    // Handle mongoose validation errors
+    if (error instanceof mongoose.Error.ValidationError) {
+      return NextResponse.json(
+        { error: "Validation error", details: error.message },
+        { status: 400 }
+      )
+    }
+
+    // Handle duplicate key errors
+    if ((error as any).code === 11000) {
+      return NextResponse.json(
+        { error: "Duplicate transaction" },
+        { status: 409 }
+      )
+    }
+
+    // Generic error response
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    )
   }
 }

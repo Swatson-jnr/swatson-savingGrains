@@ -1,3 +1,5 @@
+"use client"
+
 // import { Link } from "@inertiajs/react";
 import Link from "next/link";
 import building from "@/public/img/building.svg";
@@ -12,8 +14,14 @@ import InventoryCard from "./components/inventory-cards";
 import PendingPickupCard from "./components/pending-pickup-card";
 import RecentActivityCard from "./components/recent-activity";
 import AuthGuard from "@/components/auth/auth-guard";
+import { useState } from "react";
+import ReceiveStockModal from "../overview/components/receive-stock-modal";
+import MoveStockModal from "../overview/components/move-stock-modal";
 
 const index = () => {
+  const [selectedCard, setSelectedCard] = useState<any>(null);
+  const [openModal, setOpenModal] = useState(false);
+
   const overviewCards = [
     {
       amount: "850 kg",
@@ -117,6 +125,16 @@ const index = () => {
     },
   ];
 
+  const handleCardClick = (card: any) => {
+    setSelectedCard(card);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setSelectedCard(null); // Clear the selected card
+  };
+
   return (
     <>
       <AuthGuard>
@@ -151,6 +169,7 @@ const index = () => {
                     key={index}
                     icon={action.icon}
                     label={action.label}
+                    onClick={() => handleCardClick(action)}
                     bgColor={action.bgColor}
                     border={action.border}
                     containerbgColor={action.containerbgColor}
@@ -210,6 +229,23 @@ const index = () => {
               </div>
             </div>
           </div>
+
+          {selectedCard?.label === "Receive Stock" && (
+            <>
+              <ReceiveStockModal
+                visible={openModal}
+                onClose={handleCloseModal}
+              />
+            </>
+          )}
+          {selectedCard?.label === "Move Stock" && (
+            <>
+              <MoveStockModal
+                visible={openModal}
+                onClose={handleCloseModal}
+              />
+            </>
+          )}
         </AppLayout>
       </AuthGuard>
     </>

@@ -416,16 +416,16 @@ const SellStockModal: React.FC<RequestTopUpModalProps> = ({
                       <FloatingLabelInput
                         label="Enter quantity"
                         name="amount"
-                        value={amount}
+                        value={quantity}
                         onChange={(e) => {
-                          setAmount(e.target.value),
+                          setQuantity(e.target.value),
                             setErrors((prev) => ({ ...prev, amount: "" }));
                         }}
                         className="h-12 max-w-[572px]"
                       />
                       {errors.amount && (
                         <span className="text-sm text-red-500">
-                          {errors.amount}
+                          {errors.quantity}
                         </span>
                       )}
                     </div>
@@ -434,16 +434,16 @@ const SellStockModal: React.FC<RequestTopUpModalProps> = ({
                       <FloatingLabelInput
                         label="price per kilogram"
                         name="amount"
-                        value={quantity}
+                        value={amount}
                         onChange={(e) => {
-                          setQuantity(e.target.value),
+                          setAmount(e.target.value),
                             setErrors((prev) => ({ ...prev, quantity: "" }));
                         }}
                         className="h-12 max-w-[572px]"
                       />
                       {errors.quantity && (
                         <span className="text-sm text-red-500">
-                          {errors.quantity}
+                          {errors.amount}
                         </span>
                       )}
                     </div>
@@ -502,7 +502,7 @@ const SellStockModal: React.FC<RequestTopUpModalProps> = ({
                       </h1>
                       <StockConfirmationDetails details={details} />
 
-                      <div>
+                      <div className="mb-4">
                         <h1 className="text-sm text-[#858990] font-medium mb-2 ">
                           Selling to
                         </h1>
@@ -682,14 +682,11 @@ const SellStockModal: React.FC<RequestTopUpModalProps> = ({
             </button>
 
             <Success
-              phone={phone}
               setCurrentStep={setCurrentStep}
-              passcode={passcode}
               processing={isSubmitting}
-              errors={errors}
               reset={resetForm}
+              buttonText="Sell Again"
               onClose={onClose}
-              onPasscodeChange={setPasscode}
               onSubmit={handleSubmit}
             />
           </div>

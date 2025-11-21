@@ -9,10 +9,12 @@ import Status from "./status-card";
 import WalletBalanceCard from "./wallet-balance-card";
 import Title from "@/components/title";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import axios from "axios";
 import apiClient from "@/lib/axios";
 import { getUserRolesById } from "@/lib/userRole";
+import SelectInput from "@/app/overview/components/select-input";
 
 interface WalletBackend {
   id: string | number;
@@ -70,11 +72,13 @@ const FundModalContent = ({
 }: FundModalContentProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [walletBalance, setWalletBalance] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [walletBackend, setWalletBackend] = useState<any>(null);
   const [cashBalance, setcCashBalance] = useState<number>(0);
   const [appBalance, setAppBalance] = useState<number>(0);
   const [roles, setRoles] = useState<any>([]);
-  const { toast } = useToast();
+  // const { toast } = useToast();
 
   const effectiveUserRole = userRole || getUserRole();
   const canApproveDecline =
@@ -93,14 +97,21 @@ const FundModalContent = ({
 
     if (!canApproveDecline) {
       console.log("User not authorized");
-      toast({
-        title: "Unauthorized",
-        description: "Only admin or paymaster can approve/decline requests",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Unauthorized",
+      //   description: "Only admin or paymaster can approve/decline requests",
+      //   variant: "destructive",
+      // });
+      toast.error("Only admin or paymaster can approve/decline requests");
       return;
     }
 
+    if (!paymentMethod) {
+      toast.error("Please select a payment method");
+      setErrors({ general: "Payment method is required" });
+      setIsProcessing(false);
+      return;
+    }
     setIsProcessing(true);
 
     try {
@@ -111,7 +122,7 @@ const FundModalContent = ({
       // The backend should have all the payment details already
       if (status === "approved") {
         console.log("Processing approval...");
-        requestBody.payment_method = wallet.paymentMethod;
+        requestBody.payment_method = paymentMethod;
       }
 
       console.log("Request body:", requestBody);
@@ -136,12 +147,17 @@ const FundModalContent = ({
         );
       }
 
-      toast({
-        title: "Success",
-        description: `Wallet request ${
+      // toast({
+      //   title: "Success",
+      // description: `Wallet request ${
+      //   status === "approved" ? "approved" : "declined"
+      // } successfully`,
+      // });
+      toast.success(
+        `Wallet request ${
           status === "approved" ? "approved" : "declined"
-        } successfully`,
-      });
+        } successfully`
+      );
 
       onSuccess?.();
       onClose();
@@ -159,20 +175,13 @@ const FundModalContent = ({
           error.response?.data?.error ||
           "Failed to update wallet request";
 
-        toast({
-          title: "Error",
-          description: errorMessage,
-          variant: "destructive",
-        });
+        toast.error(errorMessage);
       } else {
-        toast({
-          title: "Error",
-          description:
-            error instanceof Error
-              ? error.message
-              : "Failed to update wallet request",
-          variant: "destructive",
-        });
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : "Failed to update wallet request"
+        );
       }
     } finally {
       console.log("Setting isProcessing to false");
@@ -260,6 +269,23 @@ const FundModalContent = ({
     fetchRoles();
   }, []);
 
+  const paymentOptions = [
+    {
+      value: "Cash Payment",
+      label: "Cash Payment",
+      image: "../img/cash.svg",
+    },
+    {
+      value: "Mobile Money",
+      label: "Mobile Money",
+      image: "../img/mobile.svg",
+    },
+    {
+      value: "Bank Transfer",
+      label: "Bank Transfer",
+      image: "../img/bank.svg",
+    },
+  ];
   return (
     <div>
       {/* Header */}
@@ -323,6 +349,30 @@ const FundModalContent = ({
             {wallet.reason || "No reason provided."}
           </p>
         </div>
+
+        {wallet.status !== "approved" && (
+          <div className="z-40 flex flex-col gap-3 mt-8 w-[20050px]">
+            <label className="text-[#080808] text-sm font-normal">
+              Payment method
+            </label>
+            <SelectInput
+              placeholder="select payment method"
+              name="payment"
+              options={paymentOptions}
+              className="w-[637px]"
+              value={paymentMethod}
+              onChange={(val) => {
+                setPaymentMethod(val);
+                setErrors((prev) => ({ ...prev, paymentMethod: "" }));
+              }}
+            />
+            {/* {errors.paymentMethod && (
+                        <span className="text-sm text-red-500">
+                          {errors.paymentMethod}
+                        </span>
+                      )} */}
+          </div>
+        )}
 
         <div className="mt-8">
           <SectionHeading text="Officer's Details" />

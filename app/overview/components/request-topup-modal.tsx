@@ -40,19 +40,19 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
     const newErrors: Record<string, string> = {};
 
     if (!amount) newErrors.amount = "Please enter an amount";
-    if (!paymentMethod)
-      newErrors.paymentMethod = "Please select a payment method";
+    // if (!paymentMethod)
+    //   newErrors.paymentMethod = "Please select a payment method";
 
-    if (paymentMethod === "Mobile Money") {
-      if (!provider) newErrors.provider = "Please select a provider";
-      if (!phone) newErrors.phone = "Please enter your mobile number";
-    }
+    // if (paymentMethod === "Mobile Money") {
+    //   if (!provider) newErrors.provider = "Please select a provider";
+    //   if (!phone) newErrors.phone = "Please enter your mobile number";
+    // }
 
-    if (paymentMethod === "Bank Transfer") {
-      if (!bank) newErrors.bank = "Please select a bank";
-      if (!branch) newErrors.branch = "Please select a branch";
-      if (!phone) newErrors.phone = "Please enter your account number";
-    }
+    // if (paymentMethod === "Bank Transfer") {
+    //   if (!bank) newErrors.bank = "Please select a bank";
+    //   if (!branch) newErrors.branch = "Please select a branch";
+    //   if (!phone) newErrors.phone = "Please enter your account number";
+    // }
 
     if (!reason) newErrors.reason = "Please provide a reason for the request";
 
@@ -97,38 +97,19 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
       const mapToModelPaymentMethod = (pm?: string) => {
         if (!pm) return null;
         const p = String(pm).toLowerCase();
-        if (p === "cash" || p.includes("cash")) return "Cash Payment";
-        if (
-          p === "mobile_money" ||
-          p.includes("mobile") ||
-          p.includes("momo") ||
-          p.includes("mobile money")
-        )
-          return "Mobile Money";
-        if (
-          p === "bank_transfer" ||
-          p.includes("bank") ||
-          p.includes("transfer") ||
-          p.includes("bank transfer")
-        )
-          return "Bank Transfer";
-        // If it already matches DB enum exactly, return as-is
-        if (["Cash Payment", "Mobile Money", "Bank Transfer"].includes(pm))
-          return pm;
-        return null;
+        if (p.includes("cash")) return "Cash Payment";
+        if (p.includes("mobile") || p.includes("momo")) return "Mobile Money";
+        if (p.includes("bank")) return "Bank Transfer";
+        return pm;
       };
 
-      // Prepare request payload
       const payload: Record<string, any> = {
         amount: parseFloat(amount),
-        payment_method: mapToModelPaymentMethod(paymentMethod) ?? paymentMethod,
         reason: reason.trim(),
+        payment_method: mapToModelPaymentMethod(paymentMethod),
       };
 
-      // Log payload for debugging
-      // console.log("Creating topup payload:", payload);
-
-      // Include optional fields based on method
+      // Optional fields based on method
       if (paymentMethod === "Mobile Money") {
         payload.provider = provider;
         payload.phone_number = phone;
@@ -137,23 +118,18 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
         payload.branch_name = branch;
         payload.phone_number = phone;
       }
-      const res = await apiClient.post(
-        "wallet-topup-request",
-        payload, // request body
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
 
-      const data = await res.data;
+      const res = await apiClient.post("wallet-topup-request", payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const data = res.data;
 
       if (!data || data.error) {
         throw new Error(data?.error || "Failed to submit request");
       }
-      toast.success("Top-up request submitted successfully");
 
+      toast.success("Top-up request submitted successfully");
       resetForm();
       onClose();
     } catch (err: any) {
@@ -283,7 +259,7 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
                       onClick={onClose}
                       className="absolute right-9 top-5 rounded-full border border-[#D6D8DA] p-1.5 transition hover:bg-gray-100"
                     >
-                      <X size={11} color="#343A46"/>
+                      <X size={11} color="#343A46" />
                     </button>
                   </div>
 
@@ -316,7 +292,7 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
                       )}
                     </div>
 
-                    <div className="z-40 flex flex-col gap-3">
+                    {/* <div className="z-40 flex flex-col gap-3">
                       <label>Payment method</label>
                       <SelectInput
                         placeholder="select payment method"
@@ -333,7 +309,7 @@ const RequestTopUpModal: React.FC<RequestTopUpModalProps> = ({
                           {errors.paymentMethod}
                         </span>
                       )}
-                    </div>
+                    </div> */}
 
                     {paymentMethod === "Mobile Money" && (
                       <div className="flex flex-col gap-3">

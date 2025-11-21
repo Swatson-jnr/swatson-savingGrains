@@ -85,7 +85,7 @@ export const StockPinStep: React.FC<Props> = ({
             onClick={onSubmit}
             block
             disabled={processing || passcode.length > 5}
-            className="w-[360px] h-[50px] text-center"
+            className="w-[360px] h-[50px] text-center cursor-pointer"
           >
             {processing ? "Verifying..." : "Continue"}
           </Button>

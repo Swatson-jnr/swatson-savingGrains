@@ -1,17 +1,18 @@
-interface RecordConfirmationDetailsProps {
-  expense: {
+export interface RequestConfirmationDetailsProps {
+  details: {
     service: string;
+    amount: string;
     description: string;
-    paymentDate: Date | undefined;
-    amountPaid: string;
     paymentMethod: string;
-    accountNumber: string;
+    paymentDate: string;
   };
 }
 
+//   quantity, price, charges,date, total cost
+
 const RecordConfirmationDetails = ({
-  expense,
-}: RecordConfirmationDetailsProps) => {
+  details,
+}: RequestConfirmationDetailsProps) => {
   return (
     <>
       <div className="mb-8 flex flex-col border-b py-3">
@@ -19,53 +20,37 @@ const RecordConfirmationDetails = ({
           <p className="text-[16px] font-normal text-[#8E8E93]">
             Service paying for
           </p>
-          <span className="text-[16px] font-semibold text-[#000]">
-            {expense.service}
+          <span className="text-[16px] font-semibold text-black">
+            {details.service}
+          </span>
+        </div>
+        <div className="mb-5 flex items-center justify-between">
+          <p className="text-[16px] font-normal text-[#8E8E93]">Amount paid</p>
+          <span className="text-[16px] font-semibold text-black">
+            {details.amount}
+          </span>
+        </div>
+        <div className="mb-5 flex items-center justify-between">
+          <p className="text-[16px] font-normal text-[#8E8E93]">Description</p>
+          <span className="text-[16px] font-semibold text-black">
+            {details.description}
+          </span>
+        </div>
+        <div className="mb-5 flex items-center justify-between">
+          <p className="text-[16px] font-normal text-[#8E8E93]">Payment date</p>
+          <span className="text-[16px] font-semibold text-black">
+            {details.paymentDate}
           </span>
         </div>
         <div className="mb-5 flex items-center justify-between">
           <p className="text-[16px] font-normal text-[#8E8E93]">
-            Amount paid
+            Payment method
           </p>
-          <span className="text-[16px] font-semibold text-[#000]">
-            {expense.amountPaid}
-          </span>
-        </div>
-        <div className="mb-5 flex items-center justify-between">
-          <p className="text-[16px] font-normal text-[#8E8E93]">
-            Description
-          </p>
-          <span className="text-[16px] font-semibold text-[#000]">
-            {expense.description}
-          </span>
-        </div>
-        <div className="mb-5 flex items-center justify-between">
-          <p className="text-[16px] font-normal text-[#8E8E93]">
-            Payment date
-          </p>
-          <span className="text-[16px] font-semibold text-[#000]">
-            {expense.paymentDate
-              ? expense.paymentDate.toLocaleDateString()
-              : "—"}
-          </span>
-        </div>
-        <div className="mb-5 flex items-center justify-between">
-          <p className="text-[16px] font-normal text-[#8E8E93]">
-            Payment Method
-          </p>
-          <span className="text-[16px] font-semibold text-[#000]">
-            {expense.paymentMethod}
+          <span className="text-[16px] font-semibold text-black">
+            {details.paymentMethod}
           </span>
         </div>
       </div>
-
-      {/* reason */}
-      {/* <div className="mt-4">
-        <h1 className="text-[16px] font-normal text-[#8E8E93]">Reason</h1>
-        <span className="text-[16px] font-semibold text-[#000]">
-          {expense.des}
-        </span>
-      </div> */}
     </>
   );
 };
