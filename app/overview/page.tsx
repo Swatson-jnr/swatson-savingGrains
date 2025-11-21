@@ -243,7 +243,7 @@ export default function OverviewPage({ transactions }: Props) {
             <div className="mb-5 flex items-center justify-between">
               <Title text="Recent Transactions" weight="semibold" level={5} />
               <Link href="/overview/transactions">
-                <Button>View all</Button>
+                <Button className="text-white cursor-pointer">View all</Button>
               </Link>
             </div>
             <Table tableDetails={tableData} />

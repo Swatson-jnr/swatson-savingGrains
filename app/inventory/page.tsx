@@ -183,7 +183,7 @@ const index = () => {
                 <div className="mb-3 flex items-center justify-between">
                   <Title text="Pending Pickups" level={5} />
                   <Link href="/inventory/pending-pickups">
-                    <Button className="bg-[#E7B00E]">View All</Button>
+                    <Button className="bg-[#E7B00E] text-white cursor-pointer">View All</Button>
                   </Link>
                 </div>
                 <div className="space-y-3 rounded-xl border border-[#D6D8DA] px-5 py-5">
@@ -207,7 +207,7 @@ const index = () => {
                 <div className="mb-3 flex items-center justify-between">
                   <Title text="Recent Activities" level={5} />
                   <Link href="/inventory/recent-activities">
-                    <Button>View All</Button>
+                    <Button className="text-white cursor-pointer">View All</Button>
                   </Link>
                 </div>
 
