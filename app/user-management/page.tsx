@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 
 import { CheckCircle, ChevronLeft, ChevronRight, X } from "lucide-react";
 import React, { useState } from "react";
@@ -37,7 +36,7 @@ const UserManagement: React.FC = () => {
   const [selectedConflict, setSelectedConflict] = useState<ConflictType>(null);
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(
-    null,
+    null
   );
 
   const closeModal = () => {
@@ -158,7 +157,7 @@ const UserManagement: React.FC = () => {
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
-                User Management
+                User Management System
               </h1>
               <p className="mt-1 text-sm text-gray-600">
                 View and manage all users
