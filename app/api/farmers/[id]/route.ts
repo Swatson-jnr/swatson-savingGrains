@@ -4,10 +4,12 @@ import { NextRequest, NextResponse } from "next/server";
 // GET single farmer by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    const farmer = await FarmerService.getFarmerById(params.id);
+    const farmer = await FarmerService.getFarmerById(id);
 
     if (!farmer) {
       return NextResponse.json(
@@ -31,17 +33,13 @@ export async function GET(
 // PUT update farmer
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const body = await req.json();
-    const { name, age, phoneNumber } = body;
-
-    const farmer = await FarmerService.updateFarmer(params.id, {
-      name,
-      age,
-      phoneNumber,
-    });
+    const farmer = await FarmerService.updateFarmer(id, body);
 
     if (!farmer) {
       return NextResponse.json(
@@ -66,10 +64,12 @@ export async function PUT(
 // DELETE farmer
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    const deleted = await FarmerService.deleteFarmer(params.id);
+    const deleted = await FarmerService.deleteFarmer(id);
 
     if (!deleted) {
       return NextResponse.json(
