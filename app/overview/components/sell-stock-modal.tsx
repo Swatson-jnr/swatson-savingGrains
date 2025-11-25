@@ -598,6 +598,8 @@ const SellStockModal: React.FC<RequestTopUpModalProps> = ({
             </button>
 
             <Success
+            header="Transfer successfully initiated"
+            subtext="Your grain transfer is in motion, ensuring a seamless move to warehouse with precision "
               setCurrentStep={setCurrentStep}
               processing={isSubmitting}
               reset={resetForm}
