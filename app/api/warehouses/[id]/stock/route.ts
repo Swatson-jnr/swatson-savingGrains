@@ -1,11 +1,8 @@
-// import connectDB from "@/lib/db";
-// import Warehouse from "@/lib/models/warehouse";
-// import { NextResponse } from "next/server";
 import connectDB from "@/lib/db";
 import { authenticate } from "@/lib/middleware/authMiddleware";
 import Warehouse from "@/lib/models/warehouse";
 import StockMovement from "@/lib/models/stock-movement";
-import User from "@/lib/models/user"; //
+import User from "@/lib/models/user";
 import { NextRequest, NextResponse } from "next/server";
 
 // Types
@@ -16,19 +13,19 @@ interface StockItem {
   pricePerUnit: number;
   notes?: string;
 }
+
 /**
  * GET — Fetch warehouse stock
  */
 export async function GET(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
+
   try {
     console.log("Connecting to database...");
     await connectDB();
-
-    // Await params
-    const { id } = await context.params;
     console.log("Fetching warehouse with ID:", id);
 
     const warehouse = await Warehouse.findById(id);
@@ -61,12 +58,13 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
+
   try {
     await connectDB();
 
-    // Authenticate user from JWT token
     const auth = await authenticate(request);
     if (auth.error)
       return NextResponse.json(
@@ -75,8 +73,6 @@ export async function POST(
       );
 
     const userId = auth.user?.id;
-
-    // Ensure user exists
     const user = await User.findById(userId);
     if (!user)
       return NextResponse.json(
@@ -84,11 +80,7 @@ export async function POST(
         { status: 404 }
       );
 
-    // Optional: Only allow roles "admin" or "stock-manager" to create movements
-    if (
-      !user.roles?.includes("admin") &&
-      !user.roles?.includes("stock-manager")
-    ) {
+    if (!user.roles?.includes("admin") && !user.roles?.includes("stock-manager")) {
       return NextResponse.json(
         { success: false, error: "Unauthorized: insufficient role" },
         { status: 403 }
@@ -131,7 +123,6 @@ export async function POST(
       );
     }
 
-    // Fetch warehouses
     const [sourceWarehouse, destinationWarehouse] = await Promise.all([
       Warehouse.findById(sourceWarehouseId),
       Warehouse.findById(destinationWarehouseId),
@@ -144,7 +135,6 @@ export async function POST(
       );
     }
 
-    // Check stock availability
     const stockItem = sourceWarehouse.currentStock.find(
       (item: any) =>
         item.grainType === grainType && item.measurementType === measurementType
@@ -172,7 +162,6 @@ export async function POST(
 
     const totalValue = quantity * pricePerUnit;
 
-    // Create stock movement
     const movement = await StockMovement.create({
       sourceWarehouse: sourceWarehouseId,
       destinationWarehouse: destinationWarehouseId,
@@ -181,12 +170,11 @@ export async function POST(
       quantity,
       pricePerUnit,
       totalValue,
-      authorizedBy: userId, // ✅ References User
+      authorizedBy: userId,
       status: "pending",
       notes: notes || "",
     });
 
-    // Populate related fields
     await movement.populate([
       { path: "sourceWarehouse", select: "name location" },
       { path: "destinationWarehouse", select: "name location" },
@@ -215,13 +203,13 @@ export async function POST(
  */
 export async function DELETE(
   request: Request,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await context.params;
+
   try {
     console.log("Connecting to database...");
     await connectDB();
-
-    const { id } = await context.params;
     console.log("Fetching warehouse with ID:", id);
 
     const { searchParams } = new URL(request.url);

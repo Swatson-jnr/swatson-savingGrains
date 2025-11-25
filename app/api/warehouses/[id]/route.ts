@@ -5,12 +5,14 @@ import { NextResponse } from "next/server";
 // GET single warehouse
 export async function GET(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     await connectDB();
 
-    const warehouse = await Warehouse.findById(params.id);
+    const warehouse = await Warehouse.findById(id);
 
     if (!warehouse) {
       return NextResponse.json(
@@ -32,13 +34,15 @@ export async function GET(
 // UPDATE warehouse
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     await connectDB();
     const body = await request.json();
 
-    const warehouse = await Warehouse.findById(params.id);
+    const warehouse = await Warehouse.findById(id);
 
     if (!warehouse) {
       return NextResponse.json(
@@ -82,12 +86,14 @@ export async function PUT(
 // DELETE warehouse (soft delete)
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     await connectDB();
 
-    const warehouse = await Warehouse.findById(params.id);
+    const warehouse = await Warehouse.findById(id);
 
     if (!warehouse) {
       return NextResponse.json(
