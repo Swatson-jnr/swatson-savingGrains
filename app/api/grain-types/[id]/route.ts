@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { GrainTypeService } from "@/lib/services/grainType-service";
+
 // GET single grain type by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    const grainType = await GrainTypeService.getGrainTypeById(params.id);
+    const grainType = await GrainTypeService.getGrainTypeById(id);
 
     if (!grainType) {
       return NextResponse.json(
@@ -30,16 +33,13 @@ export async function GET(
 // PUT update grain type
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const body = await req.json();
-    const { name, description } = body;
-
-    const grainType = await GrainTypeService.updateGrainType(params.id, {
-      name,
-      description,
-    });
+    const grainType = await GrainTypeService.updateGrainType(id, body);
 
     if (!grainType) {
       return NextResponse.json(
@@ -64,10 +64,12 @@ export async function PUT(
 // DELETE grain type
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    const deleted = await GrainTypeService.deleteGrainType(params.id);
+    const deleted = await GrainTypeService.deleteGrainType(id);
 
     if (!deleted) {
       return NextResponse.json(
