@@ -80,7 +80,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       activeKey: "reports",
     },
     {
-      href: "/users",
+      href: "/user-management",
       label: "User Management",
       icon: "../img/people.svg",
       isImage: true,

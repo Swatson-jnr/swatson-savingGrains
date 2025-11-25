@@ -1,6 +1,5 @@
-"use client"
+"use client";
 
-// import { Link } from "@inertiajs/react";
 import Link from "next/link";
 import building from "@/public/img/building.svg";
 import move from "@/public/img/move.svg";
@@ -14,13 +13,19 @@ import InventoryCard from "./components/inventory-cards";
 import PendingPickupCard from "./components/pending-pickup-card";
 import RecentActivityCard from "./components/recent-activity";
 import AuthGuard from "@/components/auth/auth-guard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReceiveStockModal from "../overview/components/receive-stock-modal";
 import MoveStockModal from "../overview/components/move-stock-modal";
+import { FarmerService } from "@/lib/services/farmer-service";
+import apiClient from "@/lib/axios";
+import BuyStockModal from "../overview/components/buy-stock-modal";
 
 const index = () => {
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const [openModal, setOpenModal] = useState(false);
+  const [allFarmers, setAllFarmers] = useState(null);
+  const [allSellers, setAllSellers] = useState(null);
+  const [warehouses, setWarehouses] = useState(null);
 
   const overviewCards = [
     {
@@ -135,6 +140,55 @@ const index = () => {
     setSelectedCard(null); // Clear the selected card
   };
 
+
+  useEffect(() => {
+    const fetchFarmers = async () => {
+      try {
+        const res = await apiClient.get("farmers", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setAllFarmers(res.data.farmers);
+        console.log("Farmers:", res.data.farmers);
+        return res.data;
+      } catch (error) {
+        console.error("Failed to load farmers:", error);
+      }
+    };
+    const fetchSellers = async () => {
+      try {
+        const res = await apiClient.get("sellers", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setAllSellers(res.data.sellers);
+        console.log("Sellers:", res.data.sellers);
+        return res.data;
+      } catch (error) {
+        console.error("Failed to load sellers:", error);
+      }
+    };
+    const fetchWarehouses = async () => {
+      try {
+        const res = await apiClient.get("warehouses", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setWarehouses(res.data.data);
+        console.log("Warehouses:", res.data.data);
+        return res.data;
+      } catch (error) {
+        console.error("Failed to load sellers:", error);
+      }
+    };
+    fetchWarehouses();
+    fetchSellers();
+    fetchFarmers();
+  }, []);
+
   return (
     <>
       <AuthGuard>
@@ -183,7 +237,9 @@ const index = () => {
                 <div className="mb-3 flex items-center justify-between">
                   <Title text="Pending Pickups" level={5} />
                   <Link href="/inventory/pending-pickups">
-                    <Button className="bg-[#E7B00E] text-white cursor-pointer">View All</Button>
+                    <Button className="bg-[#E7B00E] text-white cursor-pointer">
+                      View All
+                    </Button>
                   </Link>
                 </div>
                 <div className="space-y-3 rounded-xl border border-[#D6D8DA] px-5 py-5">
@@ -207,7 +263,9 @@ const index = () => {
                 <div className="mb-3 flex items-center justify-between">
                   <Title text="Recent Activities" level={5} />
                   <Link href="/inventory/recent-activities">
-                    <Button className="text-white cursor-pointer">View All</Button>
+                    <Button className="text-white cursor-pointer">
+                      View All
+                    </Button>
                   </Link>
                 </div>
 
@@ -238,9 +296,20 @@ const index = () => {
               />
             </>
           )}
+          {selectedCard?.label === "Buy Stock" && (
+            <>
+              <BuyStockModal
+                visible={openModal}
+                onClose={handleCloseModal}
+                farmers={allFarmers}
+                sellers={allSellers}
+              />
+            </>
+          )}
           {selectedCard?.label === "Move Stock" && (
             <>
               <MoveStockModal
+                warehouses={warehouses}
                 visible={openModal}
                 onClose={handleCloseModal}
               />

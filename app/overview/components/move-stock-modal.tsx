@@ -20,10 +20,12 @@ import CloseButton from "@/components/close-button";
 import { StockPinStep } from "./stock-pin";
 import { Success } from "@/components/succes";
 import MoveStockConfirmationDetails from "./move-stock-confirmation-details";
+import Seller from "@/lib/models/seller";
 
 interface RequestTopUpModalProps {
   visible: boolean;
   onClose: () => void;
+  warehouses: any;
 }
 
 interface Product {
@@ -38,17 +40,20 @@ export interface Option {
   id: number | string;
   label: string;
   value: string;
+  location?: string;
   category?: string;
 }
 
 const MoveStockModal: React.FC<RequestTopUpModalProps> = ({
   visible,
   onClose,
+  warehouses,
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [amount, setAmount] = useState("");
   const [quantity, setQuantity] = useState("");
   const [grainType, setGrainType] = useState("");
+  const [seller, setSeller] = useState("");
   const [passcode, setPasscode] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -103,97 +108,134 @@ const MoveStockModal: React.FC<RequestTopUpModalProps> = ({
   };
 
   const handleSubmit = async () => {
+    if (!passcode) {
+      toast.error("PIN is required");
+      return;
+    }
+
+    if (!/^\d{4}$/.test(passcode)) {
+      toast.error("PIN must be 4 digits");
+      return;
+    }
+
     setIsSubmitting(true);
-    setShowLoader(true); // Show loader
+    setShowLoader(true);
 
     try {
-      // Simulate API call (replace with your actual API call)
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // STEP 1 — VERIFY PIN
+      const verifyRes = await apiClient.post(
+        "users/verify-pin",
+        { passcode },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+          },
+        }
+      );
+      console.log("PIN verification response:", verifyRes.data);
+      if (!verifyRes.data?.success) {
+        toast.error("Invalid PIN");
+        setShowLoader(false);
+        return;
+      }
 
-      // On success, hide loader and show success screen
+      // STEP 2 — VALIDATE FORM
+      if (!selected?.id || !selectedTo?.id) {
+        toast.error("Please select both source and destination warehouses");
+        setShowLoader(false);
+        return;
+      }
+
+      if (!grainType || !quantity || !amount) {
+        toast.error("Please fill all required fields");
+        setShowLoader(false);
+        return;
+      }
+
+      // STEP 3 — BUILD PAYLOAD
+      const payload = {
+        sourceWarehouseId: selected.id,
+        destinationWarehouseId: selectedTo.id,
+        grainType,
+        quantity: Number(quantity),
+        measurementType: measurement,
+        pricePerUnit: Number(amount),
+        notes: "",
+      };
+
+      console.log("Submitting movement:", payload);
+
+      // STEP 4 — CREATE STOCK MOVEMENT
+      const response = await apiClient.post("stock-movement", payload, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        },
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+
+        // If admin → auto-approved
+        // If normal user → pending approval
+        setCurrentStep(4);
+      } else {
+        throw new Error(
+          response.data.error || "Failed to initiate stock movement"
+        );
+      }
+
       setShowLoader(false);
-      setCurrentStep(4);
-    } catch (err: any) {
-      console.error("Submission error:", err);
-      toast.error(err.message || "Submission failed");
-      setErrors({ general: err.message || "Submission failed" });
+    } catch (error: any) {
+      const msg =
+        error.response?.data?.error ||
+        error.message ||
+        "Submission failed. Please try again.";
+
+      console.error("Stock movement error:", msg);
+      toast.error(msg);
+
       setShowLoader(false);
-      setCurrentStep(3); // Go back to PIN step
+      setCurrentStep(2);
     } finally {
       setIsSubmitting(false);
     }
   };
-  const products: Product[] = [
-    {
-      id: 1,
-      label: "COP Co. Ltd Warehouse",
-      icon: "",
-      value: "COP Co. Ltd Warehouse",
-      category: "Electronics",
-    },
-    {
-      id: 1,
-      label: "COP Co. Ltd Warehouse",
-      icon: "",
-      value: "COP Co. Ltd Warehouse",
-      category: "Electronics",
-    },
-    {
-      id: 1,
-      label: "COP Co. Ltd Warehouse",
-      icon: "",
-      value: "COP Co. Ltd Warehouse",
-      category: "Electronics",
-    },
-    {
-      id: 1,
-      label: "COP Co. Ltd Warehouse",
-      icon: "",
-      value: "COP Co. Ltd Warehouse",
-      category: "Electronics",
-    },
-    {
-      id: 1,
-      label: "COP Co. Ltd Warehouse",
-      icon: "",
-      value: "COP Co. Ltd Warehouse",
-      category: "Electronics",
-    },
-    {
-      id: 1,
-      label: "COP Co. Ltd Warehouse",
-      icon: "",
-      value: "COP Co. Ltd Warehouse",
-      category: "Electronics",
-    },
-    {
-      id: 1,
-      label: "COP Co. Ltd Warehouse",
-      icon: "",
-      value: "COP Co. Ltd Warehouse",
-      category: "Electronics",
-    },
-    {
-      id: 2,
-      label: "Product 2",
-      value: "prod2",
-      icon: "",
-      category: "Clothing",
-    },
-  ];
+
+  const warehouseOptions =
+    warehouses?.map((w: any) => ({
+      id: w._id,
+      label: w.name,
+      value: w._id,
+      location: w.location,
+    })) || [];
+
   const [selected, setSelected] = useState<Option | null>(null);
   const [selectedTo, setSelectedTo] = useState<Option | null>(null);
 
   const details = {
     from: selected ? selected.label : "",
+    fromLocation: selected?.location || "",
     grainType: grainType,
     destination: selectedTo ? selectedTo.label : "",
+    // destinationLocation: selectedTo?.location || "",
     quantity: quantity,
     price: amount,
     charges: "200",
     date: "22/22/22",
   };
 
+  const sellerOptions = [
+    {
+      value: "Farmer",
+      label: "Farmer",
+      image: "../img/Grains.png",
+    },
+    {
+      value: "Field Agent",
+      label: "Field Agent",
+      image: "../img/agent.png",
+    },
+  ]
   const grainOptions = [
     {
       value: "White Maize",
@@ -228,9 +270,10 @@ const MoveStockModal: React.FC<RequestTopUpModalProps> = ({
   ];
 
   const quantityOptions = [
-    { id: "1", label: "Weight(kg)", value: "Weight(kg)" },
-    { id: "2", label: "Bags", value: "Bags" },
+    { id: "1", label: "Weight(kg)", value: "kg" },
+    { id: "2", label: "Bags", value: "bags" },
   ];
+
   const [measurement, setMeasurement] = useState(quantityOptions[0].value);
 
   return (
@@ -293,7 +336,7 @@ const MoveStockModal: React.FC<RequestTopUpModalProps> = ({
                           setSelected(option);
                           setErrors((prev) => ({ ...prev, selected: "" }));
                         }}
-                        options={products}
+                        options={warehouseOptions}
                       />
                       {errors.selected && (
                         <span className="text-sm text-red-500">
@@ -387,7 +430,7 @@ const MoveStockModal: React.FC<RequestTopUpModalProps> = ({
                           setSelectedTo(option);
                           setErrors((prev) => ({ ...prev, selected: "" }));
                         }}
-                        options={products}
+                        options={warehouseOptions}
                       />
                       {errors.selected && (
                         <span className="text-sm text-red-500">
@@ -460,9 +503,14 @@ const MoveStockModal: React.FC<RequestTopUpModalProps> = ({
                               {/* <User size={20}/> */}
                               <img src="../img/buildings.png" alt="" />
                             </div>
-                            <span className="text-sm text-[#343A46] font-bold">
-                              {selected?.label}
-                            </span>
+                            <div className="flex flex-col gap-1">
+                              <span className="text-sm text-[#343A46] font-bold">
+                                {selected?.label}
+                              </span>
+                              <span className="text-sm text-[#343A46] font-normal">
+                                {selected?.location}
+                              </span>
+                            </div>
                           </div>
                           {/*  */}
                           <div className="bg-[#F2F2F2] font-medium max-w-[102px] h-6 p-1 text-[#343A46] rounded-[10px] text-xs">
@@ -481,9 +529,14 @@ const MoveStockModal: React.FC<RequestTopUpModalProps> = ({
                               {/* <User size={20}/> */}
                               <img src="../img/buildings.png" alt="" />
                             </div>
-                            <span className="text-sm text-[#343A46] font-bold">
-                              {selected?.label}
-                            </span>
+                            <div className="flex flex-col gap-1">
+                              <span className="text-sm text-[#343A46] font-bold">
+                                {selectedTo?.label}
+                              </span>
+                              <span className="text-sm text-[#343A46] font-normal">
+                                {selectedTo?.location}
+                              </span>
+                            </div>
                           </div>
                           {/*  */}
                           <div className="bg-[#F2F2F2] font-medium max-w-[102px] h-6 p-1 text-[#343A46] rounded-[10px] text-xs">
@@ -653,8 +706,10 @@ const MoveStockModal: React.FC<RequestTopUpModalProps> = ({
             <Success
               setCurrentStep={setCurrentStep}
               processing={isSubmitting}
+              header="Transfer successfully initiated"
+              subtext="Your grain transfer is in motion, ensuring a seamless move to warehouse with precision and care."
               reset={resetForm}
-              buttonText="Sell Again"
+              buttonText="Move Again"
               onClose={onClose}
               onSubmit={handleSubmit}
             />

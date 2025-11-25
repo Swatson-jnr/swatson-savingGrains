@@ -8,7 +8,9 @@ interface Props {
   setCurrentStep(step: number): void;
   processing: boolean;
   buttonText: string;
+  subtext: string;
   onClose: () => void;
+  header: string;
   onSubmit: () => void;
   reset: () => void;
 }
@@ -17,9 +19,10 @@ export const Success: React.FC<Props> = ({
   onClose,
   setCurrentStep,
   buttonText,
+  subtext,
+  header,
   processing,
   reset,
-
 }) => {
   const sellAgainHandler = () => {
     reset();
@@ -37,22 +40,15 @@ export const Success: React.FC<Props> = ({
           {/* image */}
           <img src={"../img/success.png"} alt="" className="w-[248px]" />
           {/* Header */}
-          <div className="text-center mb-2">
-            <Title
-              text="Transfer successfully initiated"
-              weight="semibold"
-              level={5}
-            />
+          <div className="text-center mb-2 w-80">
+            <Title text={header} weight="bold" level={5} />
           </div>
 
-          <p className="text-[#858990] font-medium text-[14px]">
-            Your grain transfer is in motion, ensuring a seamless move to
-            warehouse with precision{" "}
-          </p>
+          <p className="text-[#858990] w-70 font-medium text-[14px]">{subtext}</p>
         </div>
 
         {/* Continue Button */}
-        <div className="flex w-[350px] mx-auto justify-between gap-3 pt-10 mt-10">
+        <div className="flex w-[350px] mx-auto justify-between gap-3 pt-10 mt-2">
           <Button
             type="submit"
             onClick={sellAgainHandler}

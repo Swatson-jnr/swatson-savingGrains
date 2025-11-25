@@ -28,6 +28,7 @@ interface RequestTopUpModalProps {
   onClose: () => void;
 }
 
+
 interface Product {
   id: number;
   label: string;
@@ -884,10 +885,12 @@ const PayServiceModal: React.FC<RequestTopUpModalProps> = ({
             </button>
 
             <Success
-              setCurrentStep={setCurrentStep}
+              setCurrentStep={() => setCurrentStep}
               processing={isSubmitting}
               reset={resetForm}
-              buttonText="Sell Again"
+              header="Payment successful"
+              subtext="Your payment for services has been successfully made."
+              buttonText="Make Another Payment"
               onClose={onClose}
               onSubmit={handleSubmit}
             />

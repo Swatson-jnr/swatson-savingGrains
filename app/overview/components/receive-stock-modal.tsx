@@ -533,9 +533,7 @@ const ReceiveStockModal: React.FC<RequestTopUpModalProps> = ({
                 />
               </svg>
             </div>
-            <div className="text-2xl font-bold text-black">
-                   Loading
-                  </div>
+            <div className="text-2xl font-bold text-black">Loading</div>
           </div>
           <style>{`
             @keyframes spin {
@@ -565,6 +563,8 @@ const ReceiveStockModal: React.FC<RequestTopUpModalProps> = ({
               setCurrentStep={setCurrentStep}
               processing={isSubmitting}
               reset={resetForm}
+              header="Grain Pick up complete"
+              subtext="Your grain has been successfully received"
               buttonText="Receive Again"
               onClose={onClose}
               onSubmit={handleSubmit}

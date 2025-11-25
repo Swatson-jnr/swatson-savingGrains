@@ -107,7 +107,7 @@ export default function Modal({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed bg-black inset-0 opacity-20" />
+            <div className="fixed bg-black inset-0 opacity-40" />
           </TransitionChild>
 
           <div

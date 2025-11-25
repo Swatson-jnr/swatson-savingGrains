@@ -43,9 +43,12 @@ interface PageProps {
 export default function PaymentsLayout({ children }: LayoutProps) {
   const [openModal, setOpenModal] = useState(false);
   const [data, setData] = useState<any>(null);
+  const [requestData, setRequestData] = useState([]);
+
   const [cashBalance, setcCashBalance] = useState<any>(null);
   const [appBalance, setAppBalance] = useState<any>(null);
-  // const [appBalance, setAppBalance] = useState<any>(null);
+  const [allFarmers, setAllFarmers] = useState(null);
+  const [allSellers, setAllSellers] = useState(null);
   const [walletBackend, setWalletBackend] = useState<any>(null);
   const [selectedCard, setSelectedCard] = useState<any>(null);
   const handleCardClick = (card: any) => {
@@ -53,28 +56,55 @@ export default function PaymentsLayout({ children }: LayoutProps) {
     setOpenModal(true);
   };
 
+
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedCard(null); // Clear the selected card
   };
 
   useEffect(() => {
-    const fetchRequest = async () => {
+
+    const token = localStorage.getItem("access_token");
+
+    const fetchFarmers = async () => {
       try {
-        const response = await apiClient.get("/wallet-topup-request", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-          },
+        const res = await apiClient.get("farmers", {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        // console.log("Payments data:", response.data.data);
-        setData(response.data.data);
-      } catch (error) {
-        console.error("Error fetching payments data:", error);
+        setAllFarmers(res.data.farmers || []);
+      } catch (err) {
+        console.error("Error loading farmers:", err);
       }
     };
 
-    fetchRequest();
+    const fetchSellers = async () => {
+      try {
+        const res = await apiClient.get("sellers", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setAllSellers(res.data.sellers || []);
+      } catch (err) {
+        console.error("Error loading sellers:", err);
+      }
+    };
+
+     const loadRequests = async () => {
+      try {
+        const res = await apiClient.get("/wallet-topup-request", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        setRequestData(res.data.data || []);
+      } catch (err) {}
+    };
+
+    if (token) {
+      loadRequests();
+      fetchFarmers();
+      fetchSellers();
+    }
   }, []);
+
 
   useEffect(() => {
     const fetchWallet = async () => {
@@ -85,7 +115,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
         const response = await apiClient.get("wallets", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        // console.log("Wallet card data:", response);
+        console.log("Wallet card data:", response);
         setWalletBackend(response.data);
       } catch (error: any) {
         console.error(
@@ -108,8 +138,8 @@ export default function PaymentsLayout({ children }: LayoutProps) {
     setAppBalance(appWallet ? appWallet.balance : 0);
   }, [walletBackend]);
 
-  const recentTransaction = Array.isArray(data)
-    ? data.map((item: any) => ({
+  const recentTransaction = Array.isArray(requestData)
+    ? requestData.map((item: any) => ({
         request: item.label || "Top up",
         id: item.id,
         paymentMethod: item.paymentType || "None Selected",
@@ -203,6 +233,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
     },
   ];
 
+  console.log("transactionms", data);
   return (
     <>
       <AuthGuard>
@@ -264,7 +295,9 @@ export default function PaymentsLayout({ children }: LayoutProps) {
                 <div className="mb-3 flex items-center justify-between">
                   <Title text="Fund Requests" level={5} />
                   <Link href="/payments/fund-requests">
-                    <Button className="bg-[#E7B00E] text-white">View All</Button>
+                    <Button className="bg-[#E7B00E] text-white">
+                      View All
+                    </Button>
                   </Link>
                 </div>
                 <div className="space-y-3 rounded-xl border border-[#D6D8DA] px-5 py-5">
@@ -331,28 +364,24 @@ export default function PaymentsLayout({ children }: LayoutProps) {
           )}
           {selectedCard?.label === "Pay Service" && (
             <>
-              <PayServiceModal
-                visible={openModal}
-                onClose={handleCloseModal}
-              />
+              <PayServiceModal visible={openModal} onClose={handleCloseModal} />
             </>
           )}
           {selectedCard?.label === "Sell Stock" && (
             <>
-              <SellStockModal
+              <SellStockModal visible={openModal} onClose={handleCloseModal} />
+            </>
+          )}
+          {selectedCard?.label === "Buy Stock" && (
+            <>
+              <BuyStockModal
                 visible={openModal}
+                farmers={allFarmers}
+                sellers={allSellers}
                 onClose={handleCloseModal}
               />
             </>
           )}
-          {/* {selectedCard?.label === "Buy Stock" && (
-            <>
-              <BuyStockModal
-                visible={openModal}
-                onClose={handleCloseModal}
-              />
-            </>
-          )} */}
         </AppLayout>
       </AuthGuard>
     </>

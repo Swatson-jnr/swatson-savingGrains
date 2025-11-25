@@ -10,7 +10,7 @@ import RecordTopUPModal from "./components/record-topup-modal";
 import { AppLayout } from "../layout/app";
 
 import dayjs from "dayjs";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // Images
 import bill from "@/public/img/cash-payment-bill-1.svg";
@@ -33,6 +33,8 @@ import PayServiceModal from "./components/pay-service-modal";
 import MoveStockModal from "./components/move-stock-modal";
 import ReceiveStockModal from "./components/receive-stock-modal";
 import SellStockModal from "./components/sell-stock-modal";
+import BuyStockModal from "./components/buy-stock-modal";
+import apiClient from "@/lib/axios";
 
 type ModalType =
   | "request-topup"
@@ -40,6 +42,7 @@ type ModalType =
   | "pay-service"
   | "sell-stock"
   | "move-stock"
+  | "buy-stock"
   | "receive-stock"
   | null;
 
@@ -54,6 +57,9 @@ type Props = {
 
 export default function OverviewPage({ transactions }: Props) {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
+  const [allFarmers, setAllFarmers] = useState(null);
+  const [allSellers, setAllSellers] = useState(null);
+  const [warehouses, setWarehouses] = useState(null);
 
   // Overview cards
   const overviewCards = [
@@ -188,6 +194,54 @@ export default function OverviewPage({ transactions }: Props) {
     },
   ];
 
+  useEffect(() => {
+    const fetchFarmers = async () => {
+      try {
+        const res = await apiClient.get("farmers", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setAllFarmers(res.data.farmers);
+        console.log("Farmers:", res.data.farmers);
+        return res.data;
+      } catch (error) {
+        console.error("Failed to load farmers:", error);
+      }
+    };
+    const fetchSellers = async () => {
+      try {
+        const res = await apiClient.get("sellers", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setAllSellers(res.data.sellers);
+        console.log("Sellers:", res.data.sellers);
+        return res.data;
+      } catch (error) {
+        console.error("Failed to load sellers:", error);
+      }
+    };
+    const fetchWarehouses = async () => {
+      try {
+        const res = await apiClient.get("warehouses", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        setWarehouses(res.data.data);
+        console.log("Warehouses:", res.data.data);
+        return res.data;
+      } catch (error) {
+        console.error("Failed to load sellers:", error);
+      }
+    };
+    fetchWarehouses();
+    fetchSellers();
+    fetchFarmers();
+  }, []);
+
   return (
     <AuthGuard>
       <AppLayout>
@@ -261,6 +315,13 @@ export default function OverviewPage({ transactions }: Props) {
           onClose={() => setActiveModal(null)}
         />
 
+        <BuyStockModal
+          visible={activeModal === "buy-stock"}
+          onClose={() => setActiveModal(null)}
+          farmers={allFarmers}
+          sellers={allSellers}
+        />
+
         <PayServiceModal
           visible={activeModal === "pay-service"}
           onClose={() => setActiveModal(null)}
@@ -269,6 +330,7 @@ export default function OverviewPage({ transactions }: Props) {
         <MoveStockModal
           visible={activeModal === "move-stock"}
           onClose={() => setActiveModal(null)}
+          warehouses={warehouses}
         />
         <ReceiveStockModal
           visible={activeModal === "receive-stock"}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 interface RadioOption {
   id: string;
@@ -21,9 +21,6 @@ export default function RadioInput({
   name = "radio-group",
   className = "",
 }: RadioInputProps) {
-  const [selectedValue, setSelectedValue] = useState<string>(value || "");
-
-  // Default options if none provided
   const defaultOptions: RadioOption[] = [
     { id: "1", label: "Mobile Money", value: "mobile_money" },
     { id: "2", label: "Bank Transfer", value: "bank_transfer" },
@@ -31,44 +28,41 @@ export default function RadioInput({
   ];
 
   const displayOptions = options.length > 0 ? options : defaultOptions;
+  const selectedValue = value ?? "";
 
   const handleChange = (optionValue: string) => {
-    setSelectedValue(optionValue);
-    if (onChange) {
-      onChange(optionValue);
-    }
+    onChange?.(optionValue);
   };
 
   return (
     <div className="w-full max-w-xl space-y-4 flex justify-between gap-4">
-    
-
       {displayOptions.map((option) => {
         const isSelected = selectedValue === option.value;
+        // ✅ Create unique ID using name and option.id
+        const uniqueId = `${name}-${option.id}`;
 
         return (
           <label
             key={option.id}
-            htmlFor={option.id}
-            className={`flex items-center justify-between w-[282px] h-12 gap-4 p-4 rounded-[10px] border border-[#8796A9] cursor-pointer transition-all duration-200 ${
+            htmlFor={uniqueId} // ✅ Use unique ID
+            className={`flex items-center justify-between w-[282px] h-12 gap-4 p-4 rounded-[10px] border cursor-pointer transition-all duration-200 ${
               isSelected
                 ? "border-[#343A46] bg-white"
                 : "border-gray-300 bg-white hover:border-gray-400"
             }`}
           >
-            {/* Label Text */}
             <span
-              className={`text-base font-medium transition-colors duration-200 ${
-                isSelected ? "text-[#343A46] font-bold text-[14px]" : "text-gray-400"
+              className={`text-base font-medium ${
+                isSelected ? "text-[#343A46] font-bold" : "text-gray-400"
               }`}
             >
               {option.label}
             </span>
-            {/* Custom Radio Button */}
+
             <div className="relative flex items-center justify-center">
               <input
                 type="radio"
-                id={option.id}
+                id={uniqueId} // ✅ Use unique ID
                 name={name}
                 value={option.value}
                 checked={isSelected}
@@ -76,14 +70,12 @@ export default function RadioInput({
                 className="sr-only"
               />
               <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-                  isSelected
-                    ? "border-black bg-white"
-                    : "border-gray-400 bg-white"
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  isSelected ? "border-black" : "border-gray-400"
                 }`}
               >
                 {isSelected && (
-                  <div className="w-2.5 h-2.5 rounded-full bg-black"></div>
+                  <div className="w-2.5 h-2.5 bg-black rounded-full" />
                 )}
               </div>
             </div>
