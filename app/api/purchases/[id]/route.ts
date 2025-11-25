@@ -4,10 +4,12 @@ import { PurchaseService } from "@/lib/services/purchase-service";
 // GET single purchase by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    const result = await PurchaseService.getPurchaseWithPickup(params.id);
+    const result = await PurchaseService.getPurchaseWithPickup(id);
 
     if (!result) {
       return NextResponse.json(
@@ -32,8 +34,10 @@ export async function GET(
 // PUT update purchase status
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const body = await req.json();
     const { status } = body;
@@ -45,10 +49,7 @@ export async function PUT(
       );
     }
 
-    const purchase = await PurchaseService.updatePurchaseStatus(
-      params.id,
-      status
-    );
+    const purchase = await PurchaseService.updatePurchaseStatus(id, status);
 
     if (!purchase) {
       return NextResponse.json(

@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SellerService } from "@/lib/services/seller-service";
 
-
 // GET single seller by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    const seller = await SellerService.getSellerById(params.id);
+    const seller = await SellerService.getSellerById(id);
 
     if (!seller) {
       return NextResponse.json(
@@ -29,17 +30,18 @@ export async function GET(
   }
 }
 
-
 // PUT update seller
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const body = await req.json();
     const { name, phoneNumber, address } = body;
 
-    const seller = await SellerService.updateSeller(params.id, {
+    const seller = await SellerService.updateSeller(id, {
       name,
       phoneNumber,
       address,
@@ -68,10 +70,12 @@ export async function PUT(
 // DELETE seller
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    const deleted = await SellerService.deleteSeller(params.id);
+    const deleted = await SellerService.deleteSeller(id);
 
     if (!deleted) {
       return NextResponse.json(

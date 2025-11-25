@@ -3,20 +3,18 @@ import stockMovement from "@/lib/models/stock-movement";
 import warehouse from "@/lib/models/warehouse";
 import { NextResponse } from "next/server";
 
-// Types
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
 // ============ GET SINGLE MOVEMENT ============
-export async function GET(request: Request, { params }: RouteParams) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
   try {
     await connectDB();
 
     const movement = await stockMovement
-      .findById(params.id)
+      .findById(id)
       .populate("sourceWarehouse", "name location")
       .populate("destinationWarehouse", "name location")
       .populate("authorizedBy", "name email");
@@ -36,12 +34,17 @@ export async function GET(request: Request, { params }: RouteParams) {
 }
 
 // ============ UPDATE MOVEMENT (ONLY IF PENDING) ============
-export async function PUT(request: Request, { params }: RouteParams) {
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
   try {
     await connectDB();
     const body = await request.json();
 
-    const movement = await stockMovement.findById(params.id);
+    const movement = await stockMovement.findById(id);
 
     if (!movement) {
       return NextResponse.json(
@@ -66,7 +69,6 @@ export async function PUT(request: Request, { params }: RouteParams) {
         );
       }
 
-      // Check stock availability again
       const source = await warehouse.findById(movement.sourceWarehouse);
       if (!source) {
         return NextResponse.json(
@@ -129,11 +131,16 @@ export async function PUT(request: Request, { params }: RouteParams) {
 }
 
 // ============ CANCEL MOVEMENT ============
-export async function DELETE(request: Request, { params }: RouteParams) {
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
   try {
     await connectDB();
 
-    const movement = await stockMovement.findById(params.id);
+    const movement = await stockMovement.findById(id);
 
     if (!movement) {
       return NextResponse.json(
