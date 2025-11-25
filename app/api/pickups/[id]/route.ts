@@ -1,14 +1,15 @@
-
 import { PickupService } from '@/lib/services/pickup-service';
 import { NextRequest, NextResponse } from 'next/server';
 
 // GET single pickup by ID
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
-    const pickup = await PickupService.getPickupById(params.id);
+    const pickup = await PickupService.getPickupById(id);
 
     if (!pickup) {
       return NextResponse.json(
@@ -32,8 +33,10 @@ export async function GET(
 // PUT update pickup (schedule or update status)
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
+
   try {
     const body = await req.json();
     const { scheduledDate, status, notes, actualDate } = body;
@@ -41,11 +44,15 @@ export async function PUT(
     let pickup;
 
     if (scheduledDate) {
-      pickup = await PickupService.schedulePickup(params.id, new Date(scheduledDate), notes);
+      pickup = await PickupService.schedulePickup(
+        id,
+        new Date(scheduledDate),
+        notes
+      );
     } else if (status) {
       pickup = await PickupService.updatePickupStatus(
-        params.id, 
-        status, 
+        id,
+        status,
         actualDate ? new Date(actualDate) : undefined
       );
     } else {

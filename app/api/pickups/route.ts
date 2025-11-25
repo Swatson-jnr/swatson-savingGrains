@@ -1,60 +1,61 @@
 import { PickupService } from "@/lib/services/pickup-service";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET single pickup by ID
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  const { id } = await params;
+// import { PickupService } from '@/services/pickupService';
 
+// GET all pickups (with optional status filter)
+export async function GET(req: NextRequest) {
   try {
-    const pickup = await PickupService.getPickupById(id);
+    const { searchParams } = new URL(req.url);
+    const status = searchParams.get("status");
 
-    if (!pickup) {
-      return NextResponse.json(
-        { success: false, error: "Pickup not found" },
-        { status: 404 }
-      );
+    let pickups;
+
+    if (status) {
+      pickups = await PickupService.getPickupsByStatus(status as any);
+    } else {
+      pickups = await PickupService.getAllPickups();
     }
 
     return NextResponse.json({
       success: true,
-      pickup,
+      pickups,
     });
   } catch (error: any) {
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch pickup" },
+      { success: false, error: error.message || "Failed to fetch pickups" },
       { status: 500 }
     );
   }
 }
 
-// DELETE pickup
-// export async function DELETE(
-//   req: NextRequest,
-//   { params }: { params: Promise<{ id: string }> }
-// ) {
-//   const { id } = await params;
+// POST create new pickup
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { purchaseId } = body;
 
-//   try {
-//     const deleted = await PickupService.deletePickup(id);
+    if (!purchaseId) {
+      return NextResponse.json(
+        { success: false, error: "Purchase ID is required" },
+        { status: 400 }
+      );
+    }
 
-//     if (!deleted) {
-//       return NextResponse.json(
-//         { success: false, error: "Pickup not found" },
-//         { status: 404 }
-//       );
-//     }
+    const pickup = await PickupService.createPickup(purchaseId);
 
-//     return NextResponse.json({
-//       success: true,
-//       message: "Pickup deleted successfully",
-//     });
-//   } catch (error: any) {
-//     return NextResponse.json(
-//       { success: false, error: error.message || "Failed to delete pickup" },
-//       { status: 500 }
-//     );
-//   }
-// }
+    return NextResponse.json(
+      {
+        success: true,
+        message: "Pickup created successfully",
+        pickup,
+      },
+      { status: 201 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      { success: false, error: error.message || "Failed to create pickup" },
+      { status: 500 }
+    );
+  }
+}
