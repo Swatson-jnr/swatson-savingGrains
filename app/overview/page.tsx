@@ -60,6 +60,39 @@ export default function OverviewPage({ transactions }: Props) {
   const [allFarmers, setAllFarmers] = useState(null);
   const [allSellers, setAllSellers] = useState(null);
   const [warehouses, setWarehouses] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+  // Convert "super-admin,field-agent" → ["super-admin", "field-agent"]
+  const userRoles = user.roles ? user.roles.split(",") : [];
+
+  // Role labels
+  const ROLE_LABELS: Record<string, string> = {
+    "super-admin": "Admin",
+    admin: "Admin",
+    "backoffice-admin": "Admin",
+    "field-agent": "Field Agent",
+    "stock-manager": "Stock Manager",
+    paymaster: "Paymaster",
+  };
+
+  // Priority order (first match wins)
+  const ROLE_PRIORITY = [
+    "super-admin",
+    "admin",
+    "backoffice-admin",
+    "field-agent",
+    "stock-manager",
+    "paymaster",
+  ];
+
+  let displayedRole = "User";
+
+  for (const role of ROLE_PRIORITY) {
+    if (userRoles.includes(role)) {
+      displayedRole = ROLE_LABELS[role];
+      break;
+    }
+  }
 
   // Overview cards
   const overviewCards = [
@@ -248,7 +281,7 @@ export default function OverviewPage({ transactions }: Props) {
         <div className="space-y-6 px-8 py-3">
           {/* Header */}
           <div>
-            <Title text="Welcome, Admin!" level={2} />
+            <Title text={`Welcome, ${displayedRole}!`} level={2} />
             <Title
               text="Here's an overview of your grain trading today."
               level={6}
@@ -257,7 +290,7 @@ export default function OverviewPage({ transactions }: Props) {
           </div>
 
           {/* Overview Cards */}
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {overviewCards.map((card, index) => (
               <OverviewCard
                 key={index}
@@ -269,11 +302,11 @@ export default function OverviewPage({ transactions }: Props) {
           </div>
 
           {/* Action Cards */}
-          <div className="mb-4 rounded-[20px] border border-[#D6D8DA] px-5 py-5">
+          <div className="mb-4 rounded-[20px] border border-[#D6D8DA] px-5 py-5 w-70 md:w-full">
             <div className="mb-3">
               <Title text="Quick Actions" weight="semibold" level={6} />
             </div>
-            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3 lg:grid-cols-4">
               {actions.map((action, index) => (
                 <ActionCard
                   key={index}
