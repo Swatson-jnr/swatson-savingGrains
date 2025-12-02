@@ -1,9 +1,7 @@
-// import { Link } from "@inertiajs/react";
 import dayjs from "dayjs";
 import { ArrowLeft } from "lucide-react";
 import FullTable from "../../../components/full-table";
 import Title from "../../../components/title";
-// import { AppLayout } from "../../layouts/app";
 import { formatDate } from "../../../lib/utils";
 import InventoryTable from "../components/inventory-table";
 import { AppLayout } from "../../layout/app";
