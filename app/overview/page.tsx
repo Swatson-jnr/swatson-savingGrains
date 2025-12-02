@@ -25,6 +25,7 @@ import inventoryBox from "@/public/img/inventory_box.svg";
 import overWallet from "@/public/img/over-wallet.svg";
 import pouch from "@/public/img/pouch.svg";
 import ionReceipt from "@/public/img/ion_receipt.svg";
+
 import AuthGuard from "@/components/auth/auth-guard";
 import RequestTopUpModal from "./components/request-topup-modal";
 import Link from "next/link";
@@ -46,6 +47,10 @@ type ModalType =
   | "receive-stock"
   | null;
 
+type User = {
+  roles?: string;
+};
+
 type Props = {
   transactions: {
     id: number;
@@ -57,42 +62,12 @@ type Props = {
 
 export default function OverviewPage({ transactions }: Props) {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
-  const [allFarmers, setAllFarmers] = useState(null);
-  const [allSellers, setAllSellers] = useState(null);
-  const [warehouses, setWarehouses] = useState(null);
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-
-  // Convert "super-admin,field-agent" → ["super-admin", "field-agent"]
-  const userRoles = user.roles ? user.roles.split(",") : [];
-
-  // Role labels
-  const ROLE_LABELS: Record<string, string> = {
-    "super-admin": "Admin",
-    admin: "Admin",
-    "backoffice-admin": "Admin",
-    "field-agent": "Field Agent",
-    "stock-manager": "Stock Manager",
-    paymaster: "Paymaster",
-  };
-
-  // Priority order (first match wins)
-  const ROLE_PRIORITY = [
-    "super-admin",
-    "admin",
-    "backoffice-admin",
-    "field-agent",
-    "stock-manager",
-    "paymaster",
-  ];
-
-  let displayedRole = "User";
-
-  for (const role of ROLE_PRIORITY) {
-    if (userRoles.includes(role)) {
-      displayedRole = ROLE_LABELS[role];
-      break;
-    }
-  }
+  const [allFarmers, setAllFarmers] = useState<any>(null);
+  const [allSellers, setAllSellers] = useState<any>(null);
+  const [warehouses, setWarehouses] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
+  const [displayedRole, setDisplayedRole] = useState("User");
 
   // Overview cards
   const overviewCards = [
@@ -227,52 +202,94 @@ export default function OverviewPage({ transactions }: Props) {
     },
   ];
 
+  // Fetch user from localStorage on client
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("user");
+      if (storedUser) {
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+
+        const roles = parsedUser.roles ? parsedUser.roles.split(",") : [];
+        setUserRoles(roles);
+      }
+    }
+  }, []);
+
+  // Determine displayedRole based on userRoles
+  useEffect(() => {
+    if (userRoles.length > 0) {
+      const ROLE_LABELS: Record<string, string> = {
+        "super-admin": "Admin",
+        admin: "Admin",
+        "backoffice-admin": "Admin",
+        "field-agent": "Field Agent",
+        "stock-manager": "Stock Manager",
+        paymaster: "Paymaster",
+      };
+
+      const ROLE_PRIORITY = [
+        "super-admin",
+        "admin",
+        "backoffice-admin",
+        "field-agent",
+        "stock-manager",
+        "paymaster",
+      ];
+
+      for (const role of ROLE_PRIORITY) {
+        if (userRoles.includes(role)) {
+          setDisplayedRole(ROLE_LABELS[role]);
+          return;
+        }
+      }
+    }
+  }, [userRoles]);
+
+  // Fetch data for farmers, sellers, and warehouses
+  useEffect(() => {
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
     const fetchFarmers = async () => {
+      if (!token) return;
       try {
         const res = await apiClient.get("farmers", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setAllFarmers(res.data.farmers);
-        console.log("Farmers:", res.data.farmers);
-        return res.data;
       } catch (error) {
         console.error("Failed to load farmers:", error);
       }
     };
+
     const fetchSellers = async () => {
+      if (!token) return;
       try {
         const res = await apiClient.get("sellers", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setAllSellers(res.data.sellers);
-        console.log("Sellers:", res.data.sellers);
-        return res.data;
       } catch (error) {
         console.error("Failed to load sellers:", error);
       }
     };
+
     const fetchWarehouses = async () => {
+      if (!token) return;
       try {
         const res = await apiClient.get("warehouses", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
         setWarehouses(res.data.data);
-        console.log("Warehouses:", res.data.data);
-        return res.data;
       } catch (error) {
-        console.error("Failed to load sellers:", error);
+        console.error("Failed to load warehouses:", error);
       }
     };
-    fetchWarehouses();
-    fetchSellers();
+
     fetchFarmers();
+    fetchSellers();
+    fetchWarehouses();
   }, []);
 
   return (
@@ -312,11 +329,9 @@ export default function OverviewPage({ transactions }: Props) {
                   key={index}
                   icon={action.icon}
                   label={action.label}
-                  onClick={() => {
-                    if (action.modalType) {
-                      setActiveModal(action.modalType);
-                    }
-                  }}
+                  onClick={() =>
+                    action.modalType && setActiveModal(action.modalType)
+                  }
                   bgColor={action.bgColor}
                   border={action.border}
                   containerbgColor={action.containerbgColor}
@@ -337,7 +352,7 @@ export default function OverviewPage({ transactions }: Props) {
           </div>
         </div>
 
-        {/* Modals - Only one renders at a time */}
+        {/* Modals */}
         <RequestTopUpModal
           visible={activeModal === "request-topup"}
           onClose={() => setActiveModal(null)}
