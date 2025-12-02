@@ -90,6 +90,7 @@ const FundModalContent = ({
     console.log("Status:", status);
     console.log("Wallet data:", wallet);
 
+
     if (isProcessing) {
       console.log("Already processing, returning");
       return;
@@ -189,6 +190,7 @@ const FundModalContent = ({
     }
   };
 
+
   const handleApprove = () => {
     console.log("Approve button clicked");
     handleUpdateStatus("approved");
@@ -286,6 +288,8 @@ const FundModalContent = ({
       image: "../img/bank.svg",
     },
   ];
+const user = typeof window !== "undefined" ? localStorage.getItem("user") : null;
+const parsedUser = user ? JSON.parse(user) : null;
   return (
     <div>
       {/* Header */}
@@ -350,7 +354,7 @@ const FundModalContent = ({
           </p>
         </div>
 
-        {wallet.status !== "approved" && (
+        {wallet.status === "pending" && parsedUser?.roles?.includes("admin") && (
           <div className="z-40 flex flex-col gap-3 mt-8 w-[20050px]">
             <label className="text-[#080808] text-sm font-normal">
               Payment method

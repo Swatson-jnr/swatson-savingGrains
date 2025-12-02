@@ -14,7 +14,6 @@ import apiClient from "@/lib/axios";
 
 export default function Index() {
   const [data, setData] = useState([]);
-
   useEffect(() => {
     const fetchData = async () => {
       try {

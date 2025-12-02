@@ -1,7 +1,5 @@
-"use client"
+"use client";
 
-
-// import Title from "@base/resources/js/components/title";
 import FilterDropdown from "@/app/payments/fund-requests/components/filter-dropdown";
 import { CountryDropdown } from "@/components/country-dropdown";
 import Title from "@/components/title";
@@ -10,21 +8,26 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   SortingState,
   useReactTable,
 } from "@tanstack/react-table";
 import "flatpickr/dist/themes/material_blue.css";
-import { Edit, Ellipsis, Eye, RotateCcw, Search, Trash2 } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Edit,
+  Ellipsis,
+  Eye,
+  RotateCcw,
+  Search,
+  Trash2,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import ViewDetails from "./user-detail";
 import Modal from "@/components/modal";
 import DetailsModal from "./details";
-// import { CountryDropdown } from "../../components/country-dropdown";
-// import Modal from "../../components/modal";
-// import FilterDropdown from "../fund-requests/components/filter-dropdown";
-// import DetailsModal from "./details";
-// import ViewDetails from "./users_details";
 
 type tableData = {
   name: string;
@@ -41,13 +44,12 @@ interface TableProps {
 
 export default function UserTable({ tableDetails }: TableProps) {
   const [isOpen, setIsOpen] = useState(false);
-  ///const [data] = useState(() => [...tableDetails]);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGloablFilter] = useState("");
   const [dateRange, setDateRange] = useState<Date[]>([]);
   const columnHelper = createColumnHelper<tableData>();
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(
-    null,
+    null
   );
 
   // Added missing state declarations
@@ -112,7 +114,11 @@ export default function UserTable({ tableDetails }: TableProps) {
           </span>
         </div>
       ),
-      header: () => <Title text="Name" level={7} weight="normal" />,
+      header: () => (
+        <div className="ml-2">
+          <Title text="Name" level={7} weight="normal" />
+        </div>
+      ),
     }),
     columnHelper.accessor("phoneNumber", {
       cell: (info) => (
@@ -147,7 +153,7 @@ export default function UserTable({ tableDetails }: TableProps) {
           <button
             onClick={() =>
               setOpenDropdownIndex(
-                openDropdownIndex === info.row.index ? null : info.row.index,
+                openDropdownIndex === info.row.index ? null : info.row.index
               )
             }
             className="flex items-center justify-center rounded-full border p-1 text-gray-400 hover:text-gray-600"
@@ -225,7 +231,7 @@ export default function UserTable({ tableDetails }: TableProps) {
     },
     initialState: {
       pagination: {
-        pageSize: 4,
+        pageSize: 10, // Changed from 4 to 10
       },
     },
     getCoreRowModel: getCoreRowModel(),
@@ -233,17 +239,14 @@ export default function UserTable({ tableDetails }: TableProps) {
     getSortedRowModel: getSortedRowModel(),
     onGlobalFilterChange: setGloablFilter,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(), // Added this
   });
+
   const sort = [
     { id: "Admin", name: "Admin" },
     { id: "Paymaster", name: "Paymaster" },
     { id: "Field Agent", name: "Field Agent" },
   ];
-
-  // const status = [
-  //   { id: "active", name: "Active" },
-  //   { id: "inactive", name: "Inactive" },
-  // ];
 
   const payment = [
     { id: "transfer", name: "Transfer" },
@@ -272,7 +275,7 @@ export default function UserTable({ tableDetails }: TableProps) {
           row.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           row.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
           row.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          row.phoneNumber.includes(searchTerm),
+          row.phoneNumber.includes(searchTerm)
       );
     }
 
@@ -286,34 +289,34 @@ export default function UserTable({ tableDetails }: TableProps) {
       result = result.filter((row) => activityFilter.includes(row.role));
     }
     setFilteredData(result);
-  }, [roleFilter, statusFilter, activityFilter, searchTerm]);
+  }, [roleFilter, statusFilter, activityFilter, searchTerm, tableDetails]);
 
   return (
     <>
-      <div className="scrollbar-hide mx-auto flex min-h-screen flex-col">
-        <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="scrollbar-hide mx-auto flex h-full flex-col">
+        <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative w-full max-w-md pl-2">
-            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
+            <Search className="absolute left-5 top-1/2 h-5 w-6 -translate-y-1/2 transform text-[#080808]" />
             <input
               type="text"
               placeholder="Search user"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full text-gray-900 rounded-lg border border-gray-300 py-2.5 pl-10 pr-4 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              className="w-full h-11 text-[#858990] font-normal text-sm rounded-lg border border-[#5D616B] py-3 pl-10 pr-4 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-yellow-500"
             />
           </div>
 
           <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-3">
-            <CountryDropdown />
+            <CountryDropdown width="w-40" height="h-11" />
 
-              <div className="mt-5 p-2">
-            <FilterDropdown
-              items={sort}
-              title="Role"
-              placeholder="Role"
-              onApply={handleRoleFilter}
-              multiSelect={true}
-            />
+            <div className="mt-5 p-2">
+              <FilterDropdown
+                items={sort}
+                title="Role"
+                placeholder="Role"
+                onApply={handleRoleFilter}
+                multiSelect={true}
+              />
             </div>
           </div>
         </div>
@@ -339,7 +342,7 @@ export default function UserTable({ tableDetails }: TableProps) {
                       >
                         {flexRender(
                           headers.column.columnDef.header,
-                          headers.getContext(),
+                          headers.getContext()
                         )}
                       </div>
                     </th>
@@ -349,35 +352,114 @@ export default function UserTable({ tableDetails }: TableProps) {
             </thead>
 
             {/* ....Table Body.......... */}
-            <tbody className="divide-y divide-gray-200 border border-[#E2E2E2] bg-white">
-              {table.getRowModel().rows.map((row) => (
-                <tr key={row.id} className="hover:bg-gray-50">
-                  {row.getVisibleCells().map((cell) => (
-                    <td
-                      key={cell.id}
-                      className="whitespace-nowrap px-2 py-2 text-[#080808] md:py-3"
-                    >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  ))}
+            <tbody className="divide-y divide-gray-200 border border-[#D6D8DA] bg-white">
+              {table.getRowModel().rows.length > 0 ? (
+                table.getRowModel().rows.map((row) => (
+                  <tr key={row.id} className="hover:bg-gray-50">
+                    {row.getVisibleCells().map((cell) => (
+                      <td
+                        key={cell.id}
+                        className="whitespace-nowrap px-2 py-2 text-[#080808] md:py-3"
+                      >
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={columns.length}
+                    className="py-8 text-center text-gray-500"
+                  >
+                    No users found
+                  </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        <div className="mt-4 flex w-full flex-col items-center justify-between gap-4 text-xs text-gray-700 sm:text-sm md:flex-row">
+          <div className="flex w-full items-center justify-between border-gray-200 pt-4">
+            {/* Previous Button */}
+            <button
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              className={`flex max-w-28 items-center gap-2 rounded-lg bg-[#F6F6F7] px-4 py-2 text-[14px] font-normal text-[#050000] sm:text-sm ${
+                !table.getCanPreviousPage()
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer"
+              }`}
+            >
+              <ArrowLeft size={15} />
+              Previous
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex items-center space-x-2">
+              {Array.from(
+                { length: table.getPageCount() },
+                (_, index) => index
+              ).map((index) => (
+                <button
+                  key={index}
+                  onClick={() => table.setPageIndex(index)}
+                  className={`rounded-full px-3 py-1.5 text-xs sm:text-sm ${
+                    table.getState().pagination.pageIndex === index
+                      ? "rounded-full bg-[#F6F6F7] text-[#050000] font-semibold"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+
+            {/* Next Button */}
+            <button
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              className={`flex max-w-28 items-center gap-2 rounded-lg bg-[#F6F6F7] px-4 py-2 text-[14px] font-normal text-[#050000] sm:text-sm ${
+                !table.getCanNextPage()
+                  ? "cursor-not-allowed opacity-50"
+                  : "cursor-pointer"
+              }`}
+            >
+              Next
+              <ArrowRight size={15} />
+            </button>
+          </div>
+        </div>
+
+        {/* Showing X of Y results */}
+        {/* <div className="mt-2 text-center text-sm text-gray-600">
+          Showing {table.getState().pagination.pageIndex * 10 + 1} to{" "}
+          {Math.min(
+            (table.getState().pagination.pageIndex + 1) * 10,
+            filteredData.length
+          )}{" "}
+          of {filteredData.length} results
+        </div> */}
       </div>
 
       {/* View Modal */}
       {showViewModal && (
-        <Modal visible={showViewModal} position="right">
+        <Modal
+          visible={showViewModal}
+          position="right"
+          panelClassName="!max-w-full sm:!max-w-[600px] md:!max-w-[700px] h-"
+        >
           <ViewDetails
             onClose={closeModal}
             visible={showViewModal}
             onSuccess={handleUserAddSuccess}
             mode="view"
+            userData={selectedConflict} // Pass the selected user data
           />
         </Modal>
       )}

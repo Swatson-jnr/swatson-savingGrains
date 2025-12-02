@@ -11,7 +11,7 @@ export interface IStockMovement extends Document {
   pricePerUnit: number;
   totalValue: number;
   status: "pending" | "approved" | "cancelled";
-  authorizedBy: IUser | mongoose.Types.ObjectId; // <-- use IUser here
+  authorizedBy: IUser | mongoose.Types.ObjectId; //IUser here
   notes?: string;
   movementDate?: Date;
   createdAt?: Date;

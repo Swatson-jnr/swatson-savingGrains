@@ -1,35 +1,49 @@
-import React from 'react';
-import { X } from 'lucide-react';
+import React from "react";
+import { X } from "lucide-react";
 
+
+interface UserData {
+  name: string;
+  country: string;
+  phoneNumber: string;
+  dateCreated: string;
+  role: string;
+}
 interface UserEditModalProps {
   visible: boolean;
   onClose?: () => void;
   onSuccess?: () => void;
+  userData?: UserData; // Added userData prop
 }
 
 const UserEditModal: React.FC<UserEditModalProps> = ({
   visible,
   onClose,
+  userData,
   onSuccess,
 }) => {
   if (!visible) return null;
 
   return (
-    <div 
+    <div
       className="min-h-screen bg-gray-50 p-4 flex items-center justify-center"
       onClick={onClose}
     >
-      <div 
+      <div
         className="bg-white rounded-lg shadow-lg w-full max-w-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="flex items-start justify-between p-6 border-b border-gray-200">
           <div>
-            <h2 className="text-2xl font-semibold text-gray-900">User Details</h2>
-            <p className="text-sm text-gray-600 mt-1">Check user details below</p>
+            <h2 className="text-2xl font-semibold text-gray-900">
+              User Details
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">
+              Check user details below
+            </p>
           </div>
-          <button 
+          <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
             aria-label="Close"
@@ -54,14 +68,22 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               <div className="space-y-6">
                 {/* Name */}
                 <div>
-                  <label className="text-sm text-gray-500 block mb-2">Name</label>
-                  <p className="text-gray-900 font-medium text-base">John Doe</p>
+                  <label className="text-sm text-gray-500 block mb-2">
+                    Name
+                  </label>
+                  <p className="text-gray-900 font-medium text-base">
+                    John Doe
+                  </p>
                 </div>
 
                 {/* Created */}
                 <div>
-                  <label className="text-sm text-gray-500 block mb-2">Created</label>
-                  <p className="text-gray-900 font-medium text-base">01/02/2024</p>
+                  <label className="text-sm text-gray-500 block mb-2">
+                    Created
+                  </label>
+                  <p className="text-gray-900 font-medium text-base">
+                    01/02/2024
+                  </p>
                 </div>
               </div>
 
@@ -69,14 +91,22 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
               <div className="space-y-6">
                 {/* Phone Number */}
                 <div>
-                  <label className="text-sm text-gray-500 block mb-2">Phone number</label>
-                  <p className="text-gray-900 font-medium text-base">024444444</p>
+                  <label className="text-sm text-gray-500 block mb-2">
+                    Phone number
+                  </label>
+                  <p className="text-gray-900 font-medium text-base">
+                    024444444
+                  </p>
                 </div>
 
                 {/* Role */}
                 <div>
-                  <label className="text-sm text-gray-500 block mb-2">Role</label>
-                  <p className="text-gray-900 font-medium text-base">Paymaster</p>
+                  <label className="text-sm text-gray-500 block mb-2">
+                    Role
+                  </label>
+                  <p className="text-gray-900 font-medium text-base">
+                    Paymaster
+                  </p>
                 </div>
               </div>
             </div>
@@ -85,7 +115,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({
 
         {/* Footer Actions */}
         <div className="flex flex-col-reverse sm:flex-row gap-3 p-6">
-          <button 
+          <button
             onClick={onClose}
             className="flex-1 bg-white hover:bg-gray-50 text-gray-900 font-medium py-3 px-6 rounded-lg border border-gray-300 transition-colors"
           >

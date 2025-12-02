@@ -205,7 +205,7 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
-    // ✅ IMPORTANT: Include roles in the JWT token
+    // Include roles in the JWT token
     const access = jwt.sign(
       {
         id: user._id.toString(),
@@ -229,7 +229,7 @@ export const POST = async (req: NextRequest) => {
     // 🔍 DEBUG: Verify the token immediately after creation
     try {
       const decoded = jwt.verify(access, process.env.JWT_SECRET!);
-      console.log("✅ Token verified successfully on creation:", decoded);
+      console.log("Token verified successfully on creation:", decoded);
     } catch (verifyError) {
       console.error(
         "❌ Token verification failed immediately after creation:",

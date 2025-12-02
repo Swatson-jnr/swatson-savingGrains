@@ -31,6 +31,7 @@
     "currency.js": "^2.0.4",
     "dayjs": "^1.11.19",
     "flatpickr": "^4.6.13",
+    "jose": "^6.1.2",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.553.0",
     "mongodb": "^6.20.0",

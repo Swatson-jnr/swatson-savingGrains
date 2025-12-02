@@ -137,3 +137,56 @@ export function hasRole(userRoles: string[], requiredRoles: string[]): boolean {
     userRoles.map((r) => r.toLowerCase()).includes(role.toLowerCase())
   );
 }
+
+
+// import { NextRequest } from "next/server";
+// import { jwtVerify } from "jose";
+
+// const JWT_SECRET = new TextEncoder().encode(
+//   process.env.JWT_SECRET || "your-secret-key"
+// );
+
+// export interface AuthUser {
+//   userId: string;
+//   email: string;
+//   roles: string[];
+//   firstName?: string;
+//   lastName?: string;
+// }
+
+// export interface AuthResult {
+//   user: AuthUser | null;
+// }
+
+/**
+ * Authenticate user from JWT token
+ * This function is compatible with Next.js Edge Runtime
+ */
+// export async function authenticate(req: NextRequest): Promise<AuthResult> {
+//   try {
+//     // Get token from cookie or Authorization header
+//     const token =
+//       req.cookies.get("auth-token")?.value ||
+//       req.headers.get("authorization")?.replace("Bearer ", "");
+
+//     if (!token) {
+//       return { user: null };
+//     }
+
+//     // Verify JWT token
+//     const { payload } = await jwtVerify(token, JWT_SECRET);
+
+//     return {
+//       user: {
+//         userId: payload.userId as string,
+//         email: payload.email as string,
+//         roles: payload.roles as string[],
+//         firstName: payload.firstName as string | undefined,
+//         lastName: payload.lastName as string | undefined,
+//       },
+//     };
+//   } catch (error) {
+//     console.error("Authentication error:", error);
+//     return { user: null };
+//   }
+// }

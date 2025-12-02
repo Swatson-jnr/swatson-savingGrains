@@ -56,14 +56,12 @@ export default function PaymentsLayout({ children }: LayoutProps) {
     setOpenModal(true);
   };
 
-
   const handleCloseModal = () => {
     setOpenModal(false);
     setSelectedCard(null); // Clear the selected card
   };
 
   useEffect(() => {
-
     const token = localStorage.getItem("access_token");
 
     const fetchFarmers = async () => {
@@ -88,7 +86,7 @@ export default function PaymentsLayout({ children }: LayoutProps) {
       }
     };
 
-     const loadRequests = async () => {
+    const loadRequests = async () => {
       try {
         const res = await apiClient.get("/wallet-topup-request", {
           headers: { Authorization: `Bearer ${token}` },
@@ -104,7 +102,6 @@ export default function PaymentsLayout({ children }: LayoutProps) {
       fetchSellers();
     }
   }, []);
-
 
   useEffect(() => {
     const fetchWallet = async () => {
