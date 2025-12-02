@@ -604,6 +604,8 @@ const SellStockModal: React.FC<RequestTopUpModalProps> = ({
               buttonText="Sell Again"
               onClose={onClose}
               onSubmit={handleSubmit}
+              subtext="Your grain transfer is in motion, ensuring a seamless move to warehouse with precision and care."
+              header="Transfer successfully initiated"
             />
           </div>
         </Modal>
