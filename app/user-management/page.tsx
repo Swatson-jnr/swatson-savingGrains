@@ -1,17 +1,24 @@
-"use client"
-
+"use client";
 
 import { CheckCircle, ChevronLeft, ChevronRight, X } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AppLayout } from "../layout/app";
 import UserTable from "./components/user-table";
 import DetailsModal from "./components/details";
-// import { AppLayout } from "../../layouts/app";
+import Title from "@/components/title";
+import { Button } from "@/components/ui/button";
+import dayjs from "dayjs";
+import { formatDate } from "@/lib/utils";
+import apiClient from "@/lib/axios";
 
-// import DetailsModal from "./details";
-// import UserTable from "./my_table";
-
-type ConflictType = User | null;
+interface ApiUser {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  roles: string[];
+  country?: string;
+  createdAt?: string;
+}
 
 interface User {
   actions: string;
@@ -29,15 +36,19 @@ const UserManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showApproveModal, setShowApproveModal] = useState(false);
-  const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showEditApprovalModal, setShowEditApprovalModal] = useState(false);
+  const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [users, setUsers] = useState<ApiUser[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [showViewModal, setShowViewModal] = useState(false);
   const [showResetPinModal, setShowResetPinModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedConflict, setSelectedConflict] = useState<ConflictType>(null);
+  const [selectedConflict, setSelectedConflict] = useState<any>(null);
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
   const [openDropdownIndex, setOpenDropdownIndex] = useState<number | null>(
-    null,
+    null
   );
 
   const closeModal = () => {
@@ -52,6 +63,7 @@ const UserManagement: React.FC = () => {
 
   const handleUserAddSuccess = () => {
     setShowSuccessNotification(true);
+    fetchUsers(); // Refresh the user list
     setTimeout(() => {
       setShowSuccessNotification(false);
     }, 5000);
@@ -67,78 +79,84 @@ const UserManagement: React.FC = () => {
     closeModal();
   };
 
-  const users: User[] = [
-    {
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const token = localStorage.getItem("access_token");
+
+      if (!token) {
+        setError("No access token found. Please login again.");
+        setLoading(false);
+        return;
+      }
+
+      const res = await apiClient.get("users/all-users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log("API Response:", res.data);
+
+      // Handle different response structures
+      let list: ApiUser[] = [];
+
+      if (Array.isArray(res.data)) {
+        list = res.data;
+      } else if (res.data?.data && Array.isArray(res.data.data)) {
+        list = res.data.data;
+      } else if (res.data?.users && Array.isArray(res.data.users)) {
+        list = res.data.users;
+      }
+
+      console.log("Extracted users:", list);
+      setUsers(list);
+    } catch (error: any) {
+      console.error("Error fetching users:", error);
+      setError(error?.response?.data?.message || "Failed to fetch users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const usersData: User[] = users.map((item: ApiUser, index: number) => {
+    const name =
+      `${item.first_name || ""} ${item.last_name || ""}`.trim() ||
+      "Unknown User";
+    const country = item.country || "Unknown Country";
+    const phoneNumber = item.phone_number || "N/A";
+    const dateCreated = item.createdAt
+      ? formatDate(dayjs(item.createdAt), "MMMM D, YYYY")
+      : "N/A";
+    const role =
+      Array.isArray(item.roles) && item.roles.length > 0
+        ? item.roles[0] // Changed from item.roles.join(", ") to item.roles[0]
+        : "N/A";
+
+    return {
       actions: "",
-      name: "John Doe",
-      country: "Ghana",
-      phoneNumber: "0540977343",
-      dateCreated: "May 1, 2025",
-      role: "Admin",
-    },
-    {
-      actions: "",
-      name: "John Doe",
-      country: "Kenya",
-      phoneNumber: "0540977343",
-      dateCreated: "May 1, 2025",
-      role: "Paymaster",
-    },
-    {
-      actions: "",
-      name: "John Doe",
-      country: "Ghana",
-      phoneNumber: "0540977343",
-      dateCreated: "May 1, 2025",
-      role: "Field Agent",
-    },
-    {
-      actions: "",
-      name: "John Doe",
-      country: "Ghana",
-      phoneNumber: "0540977343",
-      dateCreated: "May 1, 2025",
-      role: "Paymaster",
-    },
-    {
-      actions: "",
-      name: "John Doe",
-      country: "Ghana",
-      phoneNumber: "0540977343",
-      dateCreated: "May 1, 2025",
-      role: "Paymaster",
-    },
-    {
-      actions: "",
-      name: "John Doe",
-      country: "Kenya",
-      phoneNumber: "0540977343",
-      dateCreated: "May 1, 2025",
-      role: "Admin",
-    },
-    {
-      actions: "",
-      name: "John Doe",
-      country: "Kenya",
-      phoneNumber: "0540977343",
-      dateCreated: "May 1, 2025",
-      role: "Field Agent",
-    },
-    {
-      actions: "",
-      name: "John Doe",
-      country: "Kenya",
-      phoneNumber: "0540977343",
-      dateCreated: "May 1, 2025",
-      role: "Field Agent",
-    },
-  ];
+      name,
+      country,
+      phoneNumber,
+      dateCreated,
+      role,
+    };
+  });
+
+  console.log("Total users:", users.length);
+  console.log("Mapped usersData:", usersData);
 
   const totalPages = 10;
 
   return (
     <AppLayout>
-      <div className="min-h-screen flex-1 bg-gray-50 p-4 font-['Inter'] md:p-6 lg:p-8">
+      <div className="min-h-screen flex-1 p-4 font-['Inter'] md:p-6 lg:p-8">
         <div className="mx-auto max-w-full">
           {/* Success Notification */}
           {showSuccessNotification && (
@@ -157,20 +175,18 @@ const UserManagement: React.FC = () => {
           {/* Header */}
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
-                User Management
-              </h1>
-              <p className="mt-1 text-sm text-gray-600">
+              <Title text="User Management" weight="bold" level={2} />
+              <p className="mt-1 text-[16px] text-[#080808] font-normal">
                 View and manage all users
               </p>
             </div>
 
-            <button
+            <Button
               onClick={() => setShowAddUserModal(true)}
-              className="w-full rounded-lg bg-yellow-500 px-6 py-2.5 font-medium text-white transition-colors hover:bg-yellow-600 sm:w-auto"
+              className="w-[152px] h-10 cursor-pointer text-white text-sm font-medium"
             >
               Add New User
-            </button>
+            </Button>
           </div>
 
           {/* AddNewUserForm Modal */}
@@ -300,55 +316,25 @@ const UserManagement: React.FC = () => {
             </div>
           )}
 
-          {/* Filters */}
-
           {/* User Table */}
-          <div className="overflow-hidden rounded-lg bg-white shadow">
-            <div className="overflow-x-auto">
-              <UserTable tableDetails={users} />
-            </div>
-          </div>
-
-          {/* Pagination */}
-          <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-lg bg-white p-4 shadow sm:flex-row">
-            <button
-              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-              disabled={currentPage === 1}
-              className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Previous
-            </button>
-
-            <div className="flex gap-2 overflow-x-auto pb-2 sm:pb-0">
-              {[1, 2, 3, "...", 8, 9, 10].map((page, index) => (
-                <button
-                  key={index}
-                  onClick={() =>
-                    typeof page === "number" && setCurrentPage(page)
-                  }
-                  disabled={page === "..."}
-                  className={`min-w-[40px] rounded-lg px-3 py-2 text-sm font-medium ${
-                    page === currentPage
-                      ? "bg-yellow-500 text-white"
-                      : "border border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                  } ${page === "..." ? "cursor-default hover:bg-white" : ""}`}
-                >
-                  {page}
-                </button>
-              ))}
-            </div>
-
-            <button
-              onClick={() =>
-                setCurrentPage(Math.min(totalPages, currentPage + 1))
-              }
-              disabled={currentPage === totalPages}
-              className="flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-            >
-              Next
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </button>
+          <div className="overflow-hidden rounded-lg bg-white">
+            {loading ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="text-gray-500">Loading users...</div>
+              </div>
+            ) : error ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="text-red-500">{error}</div>
+              </div>
+            ) : usersData.length === 0 ? (
+              <div className="flex items-center justify-center p-8">
+                <div className="text-gray-500">No users found</div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <UserTable tableDetails={usersData} />
+              </div>
+            )}
           </div>
         </div>
       </div>
