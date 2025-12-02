@@ -3,19 +3,16 @@
 import useLocation from "@/hooks/location";
 import { cn } from "@/lib/utils";
 import { LogOutIcon } from "lucide-react";
-import { useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 
 type NavLink = {
   href: string;
   label: string;
-  icon:
-    | string
-    | React.ComponentType<{ size?: number | string; className?: string }>;
+  icon: string;
   isImage?: boolean;
   activeKey: string;
-  iconBg?: string;
   roles: string[];
 };
 
@@ -28,89 +25,45 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const location = useLocation();
   const router = useRouter();
 
-  // log out
+  const [user, setUser] = useState<any>(null);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false); // prevents early return
+
+  // ---- Load user from localStorage safely ----
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+      setUser(storedUser);
+      setUserRoles(storedUser?.roles?.split(",") || []);
+      setIsLoaded(true);
+    }
+  }, []);
+
+  // ---- Logout handler ----
   const handleLogout = () => {
-    try {
-      // Remove token from localStorage
+    if (typeof window !== "undefined") {
       localStorage.removeItem("access_token");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
-      localStorage.removeItem("user");
       localStorage.removeItem("userRole");
 
-      // Remove cookies manually
       document.cookie.split(";").forEach((cookie) => {
         const eqPos = cookie.indexOf("=");
-        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        const name = eqPos > -1 ? cookie.substring(0, eqPos) : cookie;
         document.cookie =
           name.trim() + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
       });
-
-      // Redirect to login page
-      router.push("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
     }
+    router.push("/login");
   };
 
-  // const navLinks: NavLink[] = [
-  //   {
-  //     href: "/overview",
-  //     label: "Overview",
-  //     icon: "../img/home.svg",
-  //     isImage: true,
-  //     activeKey: "overview",
-  //   },
-  //   {
-  //     href: "/inventory",
-  //     label: "Inventory",
-  //     icon: "../img/box.svg",
-  //     isImage: true,
-  //     activeKey: "inventory",
-  //   },
-  //   {
-  //     href: "/payments",
-  //     label: "Payments",
-  //     icon: "../img/wallet2.svg",
-  //     isImage: true,
-  //     activeKey: "payments",
-  //   },
-  //   {
-  //     href: "/sales",
-  //     label: "Sales",
-  //     icon: "../img/chart.svg",
-  //     isImage: true,
-  //     activeKey: "reports",
-  //   },
-  //   {
-  //     href: "/user-management",
-  //     label: "User Management",
-  //     icon: "../img/people.svg",
-  //     isImage: true,
-  //     activeKey: "user management",
-  //   },
-  //   {
-  //     href: "/products",
-  //     label: "Product Management",
-  //     icon: "../img/project.svg",
-  //     isImage: true,
-  //     activeKey: "project management",
-  //   },
-  //   {
-  //     href: "/reports",
-  //     label: "Reports",
-  //     icon: "../img/linear.svg",
-  //     isImage: true,
-  //     activeKey: "settings",
-  //   },
-  // ];
-
+  // ---- Nav links ----
   const navLinks: NavLink[] = [
     {
       href: "/overview",
       label: "Overview",
       icon: "../img/home.svg",
-      isImage: true,
       activeKey: "overview",
       roles: [
         "super-admin",
@@ -123,7 +76,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       href: "/inventory",
       label: "Inventory",
       icon: "../img/box.svg",
-      isImage: true,
       activeKey: "inventory",
       roles: ["super-admin", "stock-manager", "field-agent"],
     },
@@ -131,7 +83,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       href: "/payments",
       label: "Payments",
       icon: "../img/wallet2.svg",
-      isImage: true,
       activeKey: "payments",
       roles: ["super-admin", "paymaster", "field-agent"],
     },
@@ -139,7 +90,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       href: "/sales",
       label: "Sales",
       icon: "../img/chart.svg",
-      isImage: true,
       activeKey: "sales",
       roles: ["super-admin", "backoffice-admin"],
     },
@@ -147,7 +97,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       href: "/user-management",
       label: "User Management",
       icon: "../img/people.svg",
-      isImage: true,
       activeKey: "users",
       roles: ["super-admin", "backoffice-admin"],
     },
@@ -155,7 +104,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       href: "/products",
       label: "Product Management",
       icon: "../img/project.svg",
-      isImage: true,
       activeKey: "products",
       roles: ["super-admin", "stock-manager"],
     },
@@ -163,57 +111,38 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       href: "/reports",
       label: "Reports",
       icon: "../img/linear.svg",
-      isImage: true,
       activeKey: "reports",
       roles: ["super-admin", "backoffice-admin"],
     },
   ];
 
-  const user = JSON.parse(localStorage.getItem("user") || "{}");
-  const userRoles = user?.roles?.split(",") || [];
+  // ---- Filter links by user roles ----
+  const filteredLinks = useMemo(() => {
+    return navLinks.filter((link) =>
+      link.roles.some((role) => userRoles.includes(role))
+    );
+  }, [userRoles]);
 
-  const filteredLinks = navLinks.filter((link) =>
-    link.roles.some((r) => userRoles.includes(r))
-  );
-
-  // const activeTab = useMemo(() => {
-  //   if (location.pathname?.includes("/overview")) return "overview";
-  //   if (location.pathname?.includes("/inventory")) return "inventory";
-  //   if (location.pathname?.includes("/payments")) return "payments";
-  //   if (location.pathname?.includes("/settings")) return "settings";
-  //   if (location.pathname?.includes("/reports")) return "reports";
-  //   return "";
-  // }, [location]);
-
+  // ---- Active tab ----
   const activeTab = useMemo(() => {
-    const pathname = location.pathname || "";
-
-    if (pathname.includes("/overview")) {
-      return "overview";
-    }
-    if (pathname.includes("/inventory")) {
-      return "inventory";
-    }
-    if (pathname.includes("/payments")) {
-      return "payments";
-    }
-    if (pathname.includes("/reports")) {
-      return "reports";
-    }
-    if (pathname.includes("/products")) {
-      return "products";
-    }
-    if (pathname.includes("/sales")) {
-      return "sales";
-    }
-    if (pathname.includes("/user-management")) {
-      return "users";
-    }
-    if (pathname.includes("/settings")) {
-      return "settings";
-    }
+    const pathname = location.pathname ?? "";
+    if (pathname.includes("/overview")) return "overview";
+    if (pathname.includes("/inventory")) return "inventory";
+    if (pathname.includes("/payments")) return "payments";
+    if (pathname.includes("/reports")) return "reports";
+    if (pathname.includes("/products")) return "products";
+    if (pathname.includes("/sales")) return "sales";
+    if (pathname.includes("/user-management")) return "users";
+    if (pathname.includes("/settings")) return "settings";
     return "";
   }, [location.pathname]);
+
+  // ---- Render placeholder while loading ----
+  if (!isLoaded) {
+    return (
+      <nav className="fixed left-0 top-16 w-16 h-[calc(100vh-4rem)] bg-white border-r" />
+    );
+  }
 
   return (
     <>
@@ -238,6 +167,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
         )}
       >
         <div className="flex h-full flex-col justify-between">
+          {/* Navigation links */}
           <div
             className={cn(
               "flex flex-col gap-1 pt-8 transition-all duration-300",
@@ -269,6 +199,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                     className="h-[22px] w-[22px] object-contain"
                   />
                 </div>
+
                 {isOpen && (
                   <span className="whitespace-nowrap text-[16px] font-normal text-[#080808]">
                     {link.label}
