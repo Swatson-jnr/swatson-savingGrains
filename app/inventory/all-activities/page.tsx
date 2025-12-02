@@ -1,4 +1,3 @@
-// import { Link } from "@inertiajs/react";
 import dayjs from "dayjs";
 import { ArrowLeft } from "lucide-react";
 import FullTable from "../../../components/full-table";
