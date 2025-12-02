@@ -16,6 +16,7 @@ type NavLink = {
   isImage?: boolean;
   activeKey: string;
   iconBg?: string;
+  roles: string[];
 };
 
 interface SidebarProps {
@@ -25,15 +26,17 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const location = useLocation();
-  const router = useRouter(); 
+  const router = useRouter();
 
-  // ✅ Logout function
+  // log out
   const handleLogout = () => {
     try {
       // Remove token from localStorage
-      localStorage.removeItem("accessToken");
+      localStorage.removeItem("access_token");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
+      localStorage.removeItem("user");
+      localStorage.removeItem("userRole");
 
       // Remove cookies manually
       document.cookie.split(";").forEach((cookie) => {
@@ -50,6 +53,58 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     }
   };
 
+  // const navLinks: NavLink[] = [
+  //   {
+  //     href: "/overview",
+  //     label: "Overview",
+  //     icon: "../img/home.svg",
+  //     isImage: true,
+  //     activeKey: "overview",
+  //   },
+  //   {
+  //     href: "/inventory",
+  //     label: "Inventory",
+  //     icon: "../img/box.svg",
+  //     isImage: true,
+  //     activeKey: "inventory",
+  //   },
+  //   {
+  //     href: "/payments",
+  //     label: "Payments",
+  //     icon: "../img/wallet2.svg",
+  //     isImage: true,
+  //     activeKey: "payments",
+  //   },
+  //   {
+  //     href: "/sales",
+  //     label: "Sales",
+  //     icon: "../img/chart.svg",
+  //     isImage: true,
+  //     activeKey: "reports",
+  //   },
+  //   {
+  //     href: "/user-management",
+  //     label: "User Management",
+  //     icon: "../img/people.svg",
+  //     isImage: true,
+  //     activeKey: "user management",
+  //   },
+  //   {
+  //     href: "/products",
+  //     label: "Product Management",
+  //     icon: "../img/project.svg",
+  //     isImage: true,
+  //     activeKey: "project management",
+  //   },
+  //   {
+  //     href: "/reports",
+  //     label: "Reports",
+  //     icon: "../img/linear.svg",
+  //     isImage: true,
+  //     activeKey: "settings",
+  //   },
+  // ];
+
   const navLinks: NavLink[] = [
     {
       href: "/overview",
@@ -57,6 +112,12 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: "../img/home.svg",
       isImage: true,
       activeKey: "overview",
+      roles: [
+        "super-admin",
+        "field-agent",
+        "backoffice-admin",
+        "stock-manager",
+      ],
     },
     {
       href: "/inventory",
@@ -64,6 +125,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: "../img/box.svg",
       isImage: true,
       activeKey: "inventory",
+      roles: ["super-admin", "stock-manager", "field-agent"],
     },
     {
       href: "/payments",
@@ -71,36 +133,48 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       icon: "../img/wallet2.svg",
       isImage: true,
       activeKey: "payments",
+      roles: ["super-admin", "paymaster", "field-agent"],
     },
     {
       href: "/sales",
       label: "Sales",
       icon: "../img/chart.svg",
       isImage: true,
-      activeKey: "reports",
+      activeKey: "sales",
+      roles: ["super-admin", "backoffice-admin"],
     },
     {
       href: "/user-management",
       label: "User Management",
       icon: "../img/people.svg",
       isImage: true,
-      activeKey: "user management",
+      activeKey: "users",
+      roles: ["super-admin", "backoffice-admin"],
     },
     {
       href: "/products",
       label: "Product Management",
       icon: "../img/project.svg",
       isImage: true,
-      activeKey: "project management",
+      activeKey: "products",
+      roles: ["super-admin", "stock-manager"],
     },
     {
       href: "/reports",
       label: "Reports",
       icon: "../img/linear.svg",
       isImage: true,
-      activeKey: "settings",
+      activeKey: "reports",
+      roles: ["super-admin", "backoffice-admin"],
     },
   ];
+
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  const userRoles = user?.roles?.split(",") || [];
+
+  const filteredLinks = navLinks.filter((link) =>
+    link.roles.some((r) => userRoles.includes(r))
+  );
 
   // const activeTab = useMemo(() => {
   //   if (location.pathname?.includes("/overview")) return "overview";
@@ -125,6 +199,15 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     }
     if (pathname.includes("/reports")) {
       return "reports";
+    }
+    if (pathname.includes("/products")) {
+      return "products";
+    }
+    if (pathname.includes("/sales")) {
+      return "sales";
+    }
+    if (pathname.includes("/user-management")) {
+      return "users";
     }
     if (pathname.includes("/settings")) {
       return "settings";
@@ -161,7 +244,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
               isOpen ? "mr-6 px-4" : "px-2"
             )}
           >
-            {navLinks.map((link) => (
+            {filteredLinks.map((link) => (
               <Link
                 key={link.activeKey}
                 href={link.href}
